@@ -1,0 +1,3061 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F7F8FA">
+<title>UPS Operations · Hotel NEO+ Penang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================
+   DESIGN TOKENS — fintech / ops-desk
+   ========================================================== */
+:root {
+  --bg:            #F7F8FA;
+  --bg-elev:       #FFFFFF;
+  --bg-sunken:     #EEF1F5;
+  --bg-code:       #F1F5F9;
+
+  --ink:           #0B1220;
+  --ink-2:         #475569;
+  --ink-3:         #94A3B8;
+  --ink-4:         #CBD5E1;
+
+  --line:          #E2E8F0;
+  --line-strong:   #CBD5E1;
+
+  --accent:        #2563EB;
+  --accent-2:      #1D4ED8;
+  --accent-soft:   #EFF6FF;
+
+  --ok:            #059669;
+  --ok-strong:     #047857;
+  --ok-soft:       #ECFDF5;
+  --ok-line:       #A7F3D0;
+
+  --warn:          #D97706;
+  --warn-strong:   #B45309;
+  --warn-soft:     #FFFBEB;
+  --warn-line:     #FDE68A;
+
+  --crit:          #DC2626;
+  --crit-strong:   #B91C1C;
+  --crit-soft:     #FEF2F2;
+  --crit-line:     #FECACA;
+
+  --pending:       #64748B;
+  --pending-soft:  #F1F5F9;
+
+  --shadow-sm:     0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.06);
+  --shadow-md:     0 6px 14px rgba(15,23,42,.06), 0 2px 4px rgba(15,23,42,.04);
+  --shadow-lg:     0 24px 48px rgba(15,23,42,.14), 0 8px 16px rgba(15,23,42,.08);
+  --shadow-crit:   0 0 0 4px rgba(220,38,38,.15), 0 8px 24px rgba(220,38,38,.20);
+
+  --r-sm: 6px;
+  --r:    10px;
+  --r-lg: 14px;
+}
+[data-theme="dark"] {
+  --bg:            #060A13;
+  --bg-elev:       #0F1626;
+  --bg-sunken:     #0A101C;
+  --bg-code:       #0A101C;
+
+  --ink:           #E2E8F0;
+  --ink-2:         #94A3B8;
+  --ink-3:         #64748B;
+  --ink-4:         #334155;
+
+  --line:          #1E293B;
+  --line-strong:   #334155;
+
+  --accent:        #60A5FA;
+  --accent-2:      #3B82F6;
+  --accent-soft:   #0E1A2E;
+
+  --ok:            #34D399;
+  --ok-strong:     #10B981;
+  --ok-soft:       #062418;
+  --ok-line:       #0F3D2A;
+
+  --warn:          #FBBF24;
+  --warn-strong:   #F59E0B;
+  --warn-soft:     #2A1D07;
+  --warn-line:     #4A3609;
+
+  --crit:          #F87171;
+  --crit-strong:   #EF4444;
+  --crit-soft:     #2A1114;
+  --crit-line:     #4A1D22;
+
+  --pending:       #64748B;
+  --pending-soft:  #131B2A;
+
+  --shadow-sm:     0 1px 2px rgba(0,0,0,.35), 0 1px 3px rgba(0,0,0,.25);
+  --shadow-md:     0 6px 14px rgba(0,0,0,.4), 0 2px 4px rgba(0,0,0,.3);
+  --shadow-lg:     0 24px 48px rgba(0,0,0,.55), 0 8px 16px rgba(0,0,0,.35);
+  --shadow-crit:   0 0 0 4px rgba(248,113,113,.20), 0 8px 24px rgba(248,113,113,.30);
+}
+
+/* ==========================================================
+   RESET
+   ========================================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+  -webkit-font-smoothing: antialiased;
+  transition: background .2s ease, color .2s ease;
+}
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--r-sm); }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; font-variant-numeric: tabular-nums; }
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: .35;
+  mask-image: radial-gradient(ellipse at 50% 20%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 20%, black 20%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+[data-theme="dark"] body::before { opacity: .5; }
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 600px) { .container { padding: 0 14px; } }
+
+/* ==========================================================
+   ALERT BANNER
+   ========================================================== */
+.alert-banner {
+  position: sticky;
+  top: 0;
+  z-index: 80;
+  background: var(--crit);
+  color: #FFFFFF;
+  padding: 12px 24px;
+  display: none;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 20px rgba(220,38,38,.35);
+  animation: bannerSlideIn .25s cubic-bezier(.4,0,.2,1);
+}
+.alert-banner[data-active="true"] { display: flex; }
+.alert-banner[data-level="warn"] {
+  background: var(--warn);
+  box-shadow: 0 4px 20px rgba(217,119,6,.30);
+}
+.alert-banner[data-flashing="true"] {
+  animation: bannerFlash 1.2s ease-in-out infinite, bannerSlideIn .25s cubic-bezier(.4,0,.2,1);
+}
+@keyframes bannerSlideIn { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes bannerFlash {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.18) saturate(1.25); }
+}
+.alert-banner-icon {
+  width: 32px; height: 32px;
+  flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.18);
+  border-radius: 8px;
+  animation: alertPulse 1.4s ease-in-out infinite;
+}
+.alert-banner[data-flashing="false"] .alert-banner-icon { animation: none; }
+@keyframes alertPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,.4); }
+  70%      { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+}
+.alert-banner-icon svg { width: 18px; height: 18px; stroke: #FFFFFF; }
+.alert-banner-body { flex: 1; min-width: 0; }
+.alert-banner-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.alert-banner-title .badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 2px 6px;
+  background: rgba(255,255,255,.22);
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.alert-banner-msg {
+  font-size: 13.5px;
+  font-weight: 500;
+  margin-top: 2px;
+  opacity: .96;
+}
+.alert-banner-msg strong { font-weight: 700; }
+.alert-banner-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.alert-btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  color: #FFFFFF;
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.28);
+  transition: background .15s ease, transform .1s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.alert-btn:hover { background: rgba(255,255,255,.28); }
+.alert-btn:active { transform: scale(.97); }
+.alert-btn.primary {
+  background: #FFFFFF;
+  color: var(--crit);
+  border-color: #FFFFFF;
+}
+.alert-banner[data-level="warn"] .alert-btn.primary { color: var(--warn-strong); }
+.alert-btn.primary:hover { background: #FFF; opacity: .92; }
+.alert-btn svg { width: 13px; height: 13px; }
+@media (max-width: 720px) {
+  .alert-banner { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px 16px; }
+  .alert-banner-actions { width: 100%; }
+  .alert-btn { flex: 1; justify-content: center; }
+}
+.alert-banner[data-flashing="false"] { opacity: .92; }
+
+/* ==========================================================
+   HEADER
+   ========================================================== */
+.site-header {
+  padding: 22px 0 20px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 24px;
+}
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.brand-mark {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(37,99,235,.25), inset 0 1px 0 rgba(255,255,255,.2);
+  flex-shrink: 0;
+}
+.brand-mark svg { width: 22px; height: 22px; }
+.brand-text { min-width: 0; }
+.brand-eyebrow {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 2px;
+}
+.brand h1 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -.015em;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.brand h1 span { color: var(--ink-3); font-weight: 500; }
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.conn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px 6px 8px;
+  border-radius: 6px;
+  background: var(--ok-soft);
+  border: 1px solid var(--ok-line);
+  color: var(--ok-strong);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.conn-pill[data-mode="mock"] {
+  background: var(--warn-soft);
+  border-color: var(--warn-line);
+  color: var(--warn-strong);
+}
+.conn-pill[data-mode="offline"] {
+  background: var(--crit-soft);
+  border-color: var(--crit-line);
+  color: var(--crit-strong);
+}
+.conn-pill .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: currentColor;
+  position: relative;
+}
+.conn-pill .dot::after {
+  content: '';
+  position: absolute; inset: -3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .35;
+  animation: heartbeat 1.6s ease-in-out infinite;
+}
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); opacity: .35; }
+  50%      { transform: scale(1.7); opacity: 0; }
+}
+.time-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg-elev);
+  color: var(--ink-2);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.time-pill svg { width: 12px; height: 12px; color: var(--ink-3); }
+
+.header-controls { display: flex; gap: 6px; }
+.icon-btn {
+  width: 36px; height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  color: var(--ink-2);
+  transition: all .15s ease;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.icon-btn:hover {
+  color: var(--ink);
+  border-color: var(--line-strong);
+  background: var(--bg-sunken);
+}
+.icon-btn:active { transform: scale(.94); }
+.icon-btn svg { width: 16px; height: 16px; }
+.icon-btn[data-on="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.refresh-btn.spinning svg { animation: spin .9s cubic-bezier(.4,0,.2,1); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ==========================================================
+   KPI STRIP
+   ========================================================== */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: 1.7fr repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+@media (max-width: 1024px) {
+  .kpi-strip { grid-template-columns: 1fr 1fr 1fr; }
+  .kpi-hero { grid-column: span 3; }
+}
+@media (max-width: 640px) {
+  .kpi-strip { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kpi-hero { grid-column: span 2; }
+}
+
+.kpi {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s ease;
+}
+.kpi:hover { border-color: var(--line-strong); }
+.kpi-hero {
+  padding: 18px 22px;
+  background: linear-gradient(135deg, var(--bg-elev) 0%, var(--bg-elev) 60%, var(--accent-soft) 200%);
+}
+.kpi-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.kpi-label svg { width: 12px; height: 12px; color: var(--ink-3); }
+.kpi-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.kpi-hero .kpi-value {
+  font-family: 'Inter', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  gap: 12px;
+}
+.kpi-value .unit {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+  letter-spacing: 0;
+  font-family: 'Inter', sans-serif;
+}
+.kpi-value.ok   { color: var(--ok-strong); }
+.kpi-value.warn { color: var(--warn-strong); }
+.kpi-value.crit { color: var(--crit-strong); animation: valueThrob 1.4s ease-in-out infinite; }
+@keyframes valueThrob {
+  0%, 100% { transform: none; }
+  50%      { transform: translateY(-1px); }
+}
+.kpi-sub {
+  font-size: 11.5px;
+  color: var(--ink-2);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.kpi-sub .trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 10.5px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.kpi-sub .trend.ok   { background: var(--ok-soft);   color: var(--ok-strong); }
+.kpi-sub .trend.warn { background: var(--warn-soft); color: var(--warn-strong); }
+
+.status-strip {
+  display: flex;
+  gap: 3px;
+  height: 6px;
+  margin-top: 14px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.status-strip .seg {
+  flex: 1;
+  height: 100%;
+  border-radius: 2px;
+  transition: background .3s ease;
+  position: relative;
+}
+.status-strip .seg.ok      { background: var(--ok); }
+.status-strip .seg.warn    { background: var(--warn); animation: segFlash 1.4s ease-in-out infinite; }
+.status-strip .seg.crit    { background: var(--crit); animation: segFlash .8s ease-in-out infinite; }
+.status-strip .seg.pending { background: var(--ink-4); }
+@keyframes segFlash {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .5; }
+}
+
+/* ==========================================================
+   SECTION HEADING
+   ========================================================== */
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.section-head h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.01em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-head h2 .count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  background: var(--bg-sunken);
+  color: var(--ink-2);
+  border-radius: 100px;
+  letter-spacing: 0;
+}
+.section-head .hint {
+  font-size: 12px;
+  color: var(--ink-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.section-head .hint svg { width: 12px; height: 12px; }
+
+/* ==========================================================
+   UPS GRID
+   ========================================================== */
+.ups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 14px;
+  margin-bottom: 40px;
+}
+@media (max-width: 600px) {
+  .ups-grid { grid-template-columns: 1fr; gap: 12px; }
+}
+
+.ups-card {
+  position: relative;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition:
+    transform .2s cubic-bezier(.4,0,.2,1),
+    box-shadow .2s ease,
+    border-color .2s ease;
+  overflow: hidden;
+  text-align: left;
+  width: 100%;
+  color: var(--ink);
+  animation: cardIn .5s cubic-bezier(.4,0,.2,1) backwards;
+}
+.ups-card:nth-child(1) { animation-delay: .04s; }
+.ups-card:nth-child(2) { animation-delay: .09s; }
+.ups-card:nth-child(3) { animation-delay: .14s; }
+.ups-card:nth-child(4) { animation-delay: .19s; }
+.ups-card:nth-child(5) { animation-delay: .24s; }
+.ups-card:nth-child(6) { animation-delay: .29s; }
+@keyframes cardIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ups-card { animation: none; }
+  * { transition: none !important; animation-duration: .001ms !important; }
+}
+
+.ups-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--ok);
+  transition: background .25s ease;
+}
+.ups-card[data-status="battery"]::before  { background: var(--warn); }
+.ups-card[data-status="critical"]::before { background: var(--crit); }
+.ups-card[data-status="pending"]::before,
+.ups-card[data-status="offline"]::before  { background: var(--ink-4); }
+
+.ups-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+}
+.ups-card:hover .card-cta .see { color: var(--accent); }
+.ups-card:hover .card-cta .see svg { transform: translateX(3px); }
+
+.ups-card.alert-critical {
+  border-color: var(--crit);
+  box-shadow: var(--shadow-crit);
+  animation: cardFlashCrit 1.2s ease-in-out infinite;
+}
+.ups-card.alert-critical::before { background: var(--crit); height: 4px; }
+@keyframes cardFlashCrit {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(220,38,38,.15), 0 8px 24px rgba(220,38,38,.20); }
+  50%      { box-shadow: 0 0 0 8px rgba(220,38,38,.32), 0 8px 24px rgba(220,38,38,.40); }
+}
+.ups-card.alert-warn {
+  border-color: var(--warn);
+  box-shadow: 0 0 0 3px rgba(217,119,6,.14), var(--shadow-md);
+  animation: cardFlashWarn 1.6s ease-in-out infinite;
+}
+.ups-card.alert-warn::before { background: var(--warn); height: 4px; }
+@keyframes cardFlashWarn {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(217,119,6,.14), var(--shadow-md); }
+  50%      { box-shadow: 0 0 0 6px rgba(217,119,6,.28), var(--shadow-md); }
+}
+.ups-card.alert-acked { animation: none !important; }
+
+/* Card head */
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.card-location {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.card-rackname {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px 4px 7px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+}
+.status-pill .pulse {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor;
+}
+.status-pill.ok       { color: var(--ok-strong);   background: var(--ok-soft);      border-color: var(--ok-line); }
+.status-pill.warn     { color: var(--warn-strong); background: var(--warn-soft);    border-color: var(--warn-line); }
+.status-pill.crit     { color: var(--crit-strong); background: var(--crit-soft);    border-color: var(--crit-line); }
+.status-pill.pending  { color: var(--pending);     background: var(--pending-soft); border-color: var(--line); }
+.status-pill.ok .pulse    { animation: dotPulse 2.2s ease-in-out infinite; }
+.status-pill.warn .pulse,
+.status-pill.crit .pulse  { animation: dotPulseFast 1s ease-in-out infinite; }
+@keyframes dotPulse {
+  0%, 100% { box-shadow: 0 0 0 0 currentColor; opacity: 1; }
+  70%      { box-shadow: 0 0 0 6px transparent; opacity: .7; }
+}
+@keyframes dotPulseFast {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 currentColor; opacity: 1; }
+  50%      { transform: scale(1.2); box-shadow: 0 0 0 5px transparent; opacity: .7; }
+}
+
+.card-model {
+  font-size: 12px;
+  color: var(--ink-2);
+  margin-top: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-model .capacity {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  padding: 2px 6px;
+  background: var(--bg-code);
+  border-radius: 4px;
+  color: var(--ink-2);
+  font-weight: 600;
+}
+.card-model .live-tag {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  padding: 1px 6px 2px;
+  background: var(--ok-soft);
+  color: var(--ok-strong);
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.card-model .live-tag::before {
+  content: '';
+  width: 5px; height: 5px;
+  background: var(--ok);
+  border-radius: 50%;
+  animation: liveBlink 1.2s ease-in-out infinite;
+}
+@keyframes liveBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .35; }
+}
+
+/* ==========================================================
+   FLOW DIAGRAM — the signature power topology
+   ========================================================== */
+.flow {
+  display: grid;
+  grid-template-columns: 66px 1fr 82px 1fr 66px;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  column-gap: 4px;
+  row-gap: 2px;
+  padding: 14px 8px 10px;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin-top: 12px;
+}
+.flow-ac       { grid-column: 1; grid-row: 1; }
+.flow-line-ac  { grid-column: 2; grid-row: 1; align-self: start; margin-top: 20px; }
+.flow-ups      { grid-column: 3; grid-row: 1; }
+.flow-line-out { grid-column: 4; grid-row: 1; align-self: start; margin-top: 20px; }
+.flow-load     { grid-column: 5; grid-row: 1; }
+.flow-branch   { grid-column: 3; grid-row: 2; justify-self: center; }
+.flow-bat      { grid-column: 3; grid-row: 3; justify-self: center; }
+
+.flow-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.flow-icon {
+  width: 40px; height: 40px;
+  border-radius: 9px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-2);
+  transition: color .25s ease, border-color .25s ease, background .25s ease;
+  position: relative;
+}
+.flow-icon svg { width: 18px; height: 18px; }
+
+.flow-ac[data-active="true"] .flow-icon {
+  color: var(--ok-strong);
+  border-color: var(--ok-line);
+  background: var(--ok-soft);
+}
+.flow-ac[data-active="false"] .flow-icon {
+  color: var(--crit);
+  border-color: var(--crit-line);
+  background: var(--crit-soft);
+  animation: iconFail 1s ease-in-out infinite;
+}
+@keyframes iconFail {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .55; }
+}
+.flow-ups .flow-icon {
+  color: var(--accent);
+  border-color: var(--accent-soft);
+  background: var(--accent-soft);
+}
+.flow-load .flow-icon {
+  color: var(--ink);
+  border-color: var(--line-strong);
+  background: var(--bg-elev);
+}
+
+.flow-label {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+}
+.flow-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+  line-height: 1.1;
+  text-align: center;
+}
+.flow-val.dead {
+  color: var(--crit);
+  animation: valueThrob 1.2s ease-in-out infinite;
+}
+
+/* Flowing dashed lines */
+.flow-line {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--line);
+  position: relative;
+  overflow: hidden;
+  min-width: 24px;
+}
+.flow-line::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg,
+    var(--ok) 0 5px, transparent 5px 12px);
+  animation: flowRight .7s linear infinite;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.flow-line[data-active="true"]::before { opacity: 1; }
+.flow-line[data-active="false"] {
+  background: repeating-linear-gradient(90deg,
+    var(--crit-line) 0 4px, transparent 4px 8px);
+}
+@keyframes flowRight { to { transform: translateX(12px); } }
+
+/* Reverse flow (load fed FROM ups when on battery — same direction visually) */
+
+/* Vertical branch line (UPS <-> Battery) */
+.flow-branch {
+  width: 3px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--line);
+  position: relative;
+  overflow: hidden;
+}
+.flow-branch::before {
+  content: '';
+  position: absolute; inset: 0;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.flow-branch[data-mode="charging"]::before {
+  background: repeating-linear-gradient(180deg,
+    var(--ok) 0 3px, transparent 3px 8px);
+  animation: flowDown .55s linear infinite;
+  opacity: 1;
+}
+.flow-branch[data-mode="draining"]::before {
+  background: repeating-linear-gradient(0deg,
+    var(--crit) 0 3px, transparent 3px 8px);
+  animation: flowUp .45s linear infinite;
+  opacity: 1;
+}
+@keyframes flowDown { to { transform: translateY(8px); } }
+@keyframes flowUp   { to { transform: translateY(-8px); } }
+
+/* Battery node with visual fill inside the flow diagram */
+.flow-bat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.flow-bat-shape {
+  position: relative;
+  width: 56px;
+  height: 22px;
+  border: 1.75px solid var(--ink-2);
+  border-radius: 3px;
+  padding: 2px;
+  transition: border-color .3s ease;
+}
+.flow-bat-shape::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 11px;
+  background: var(--ink-2);
+  border-radius: 0 2px 2px 0;
+  transition: background .3s ease;
+}
+.flow-bat-fill {
+  height: 100%;
+  background: var(--ok);
+  border-radius: 1px;
+  transition: width .6s cubic-bezier(.4,0,.2,1), background .3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.flow-bat[data-level="high"]   .flow-bat-fill { background: var(--ok); }
+.flow-bat[data-level="medium"] .flow-bat-fill { background: var(--warn); }
+.flow-bat[data-level="low"]    .flow-bat-fill { background: var(--crit); }
+
+/* Charging animation — bright left-to-right sweep */
+.flow-bat[data-mode="charging"] .flow-bat-fill::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,.75) 50%,
+    transparent 100%);
+  animation: chargeShine 1.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes chargeShine {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Drain animation — sweep right-to-left when on battery */
+.flow-bat[data-mode="draining"] .flow-bat-fill::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(-90deg,
+    transparent 0%,
+    rgba(255,255,255,.55) 50%,
+    transparent 100%);
+  animation: drainShine 1s linear infinite;
+  pointer-events: none;
+}
+@keyframes drainShine {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.flow-bat[data-level="low"] .flow-bat-shape {
+  animation: batteryUrgent .9s ease-in-out infinite;
+  border-color: var(--crit) !important;
+}
+.flow-bat[data-level="low"] .flow-bat-shape::after {
+  background: var(--crit);
+}
+@keyframes batteryUrgent {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
+  50%      { box-shadow: 0 0 0 3px rgba(220,38,38,.25); }
+}
+
+.flow-bat-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+  transition: color .2s ease;
+}
+.flow-bat-pct.warn { color: var(--warn-strong); }
+.flow-bat-pct.crit { color: var(--crit-strong); animation: valueThrob 1s ease-in-out infinite; }
+.flow-bat-pct span {
+  font-size: 9.5px;
+  font-weight: 500;
+  color: var(--ink-3);
+  margin-left: 1px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Charge ETA — small caption under battery, only shown when charging */
+.flow-bat-eta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 500;
+  color: var(--ink-3);
+  letter-spacing: -.01em;
+  line-height: 1.1;
+  margin-top: 1px;
+  text-align: center;
+  min-height: 11px;
+  font-variant-numeric: tabular-nums;
+  transition: opacity .2s ease;
+}
+.flow-bat-eta:empty { opacity: 0; }
+.flow-bat[data-mode="charging"] .flow-bat-eta { color: var(--ok-strong); }
+.flow-large .flow-bat-eta { font-size: 11px; margin-top: 2px; min-height: 13px; }
+
+/* ==========================================================
+   METRIC GRID + LOAD BAR
+   ========================================================== */
+.metric-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 16px;
+  margin-top: 14px;
+}
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.metric-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.metric-label svg { width: 10px; height: 10px; opacity: .75; }
+.metric-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+.metric-value.warn { color: var(--warn-strong); }
+.metric-value.crit { color: var(--crit-strong); }
+.metric-value .u {
+  font-size: 10.5px;
+  color: var(--ink-3);
+  margin-left: 2px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+}
+
+.load-bar { margin-top: 14px; }
+.load-bar-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: var(--ink-3);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 600;
+  gap: 8px;
+}
+.load-bar-head .left {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.load-bar-head .val {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--ink);
+  font-size: 11.5px;
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.load-bar-track {
+  height: 6px;
+  background: var(--bg-sunken);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.load-bar-track::before,
+.load-bar-track::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: var(--line-strong);
+  z-index: 1;
+}
+.load-bar-track::before { left: 70%; }
+.load-bar-track::after  { left: 90%; }
+.load-bar-fill {
+  height: 100%;
+  background: var(--ok);
+  border-radius: 3px;
+  transition: width .6s cubic-bezier(.4,0,.2,1), background .3s ease;
+  position: relative;
+}
+.load-bar-fill::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.35) 50%, transparent 100%);
+  animation: chargeShine 3s ease-in-out infinite;
+}
+.load-bar-fill.warn { background: var(--warn); }
+.load-bar-fill.crit { background: var(--crit); }
+
+/* Sparkline */
+.spark {
+  display: inline-block;
+  vertical-align: middle;
+  color: var(--ok);
+  transition: color .3s ease;
+  flex-shrink: 0;
+}
+.spark polyline {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.spark[data-level="warn"] { color: var(--warn); }
+.spark[data-level="crit"] { color: var(--crit); }
+
+/* Card footer */
+.card-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+.card-cta .equipment-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-cta .equipment-count svg { width: 12px; height: 12px; }
+.card-cta .see {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink-2);
+  font-weight: 600;
+  transition: color .15s ease;
+}
+.card-cta .see svg { width: 12px; height: 12px; transition: transform .15s ease; }
+
+/* Pending state */
+.ups-card[data-status="pending"] {
+  opacity: .82;
+  background:
+    repeating-linear-gradient(-45deg,
+      var(--bg-elev),
+      var(--bg-elev) 8px,
+      var(--bg-sunken) 8px,
+      var(--bg-sunken) 9px);
+}
+.ups-card[data-status="pending"] .flow,
+.ups-card[data-status="pending"] .metric-grid,
+.ups-card[data-status="pending"] .load-bar { opacity: .55; }
+
+/* ==========================================================
+   DEMO / SIMULATION CONTROLS
+   ========================================================== */
+.demo-panel {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 18px;
+  margin-bottom: 40px;
+  box-shadow: var(--shadow-sm);
+}
+.demo-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.demo-head h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.demo-head h3 .badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  padding: 2px 6px;
+  background: var(--warn-soft);
+  color: var(--warn-strong);
+  border: 1px solid var(--warn-line);
+  border-radius: 3px;
+  letter-spacing: .04em;
+  font-weight: 700;
+}
+.demo-head p {
+  font-size: 12px;
+  color: var(--ink-3);
+  flex: 1;
+  min-width: 200px;
+}
+.demo-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.demo-btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  transition: all .15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.demo-btn:hover { border-color: var(--line-strong); background: var(--bg-sunken); }
+.demo-btn:active { transform: scale(.97); }
+.demo-btn svg { width: 12px; height: 12px; }
+.demo-btn.warn { color: var(--warn-strong); border-color: var(--warn-line); background: var(--warn-soft); }
+.demo-btn.warn:hover { background: var(--warn-line); }
+.demo-btn.crit { color: var(--crit-strong); border-color: var(--crit-line); background: var(--crit-soft); }
+.demo-btn.crit:hover { background: var(--crit-line); }
+.demo-btn.ok   { color: var(--ok-strong);   border-color: var(--ok-line);   background: var(--ok-soft); }
+.demo-btn.ok:hover   { background: var(--ok-line); }
+
+/* ==========================================================
+   MODAL / DETAIL PANEL
+   ========================================================== */
+.modal-scrim {
+  position: fixed; inset: 0;
+  background: rgba(11,18,32,.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+  z-index: 90;
+}
+.modal-scrim.open { opacity: 1; pointer-events: auto; }
+[data-theme="dark"] .modal-scrim { background: rgba(0,0,0,.7); }
+
+.detail-panel {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: min(680px, 100vw);
+  background: var(--bg-elev);
+  box-shadow: var(--shadow-lg);
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.detail-panel.open { transform: translateX(0); }
+@media (max-width: 640px) {
+  .detail-panel {
+    top: auto;
+    width: 100%;
+    height: 92vh;
+    border-radius: 16px 16px 0 0;
+    transform: translateY(100%);
+  }
+  .detail-panel.open { transform: translateY(0); }
+}
+
+.panel-head {
+  padding: 20px 24px 18px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.panel-head-content { flex: 1; min-width: 0; }
+.panel-eyebrow {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.panel-eyebrow .live-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  padding: 1px 5px 2px;
+  background: var(--ok-soft);
+  color: var(--ok-strong);
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.panel-eyebrow .live-tag::before {
+  content: '';
+  width: 4px; height: 4px;
+  background: var(--ok);
+  border-radius: 50%;
+  animation: liveBlink 1.2s ease-in-out infinite;
+}
+.panel-location {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.015em;
+  line-height: 1.15;
+}
+.panel-sub {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin-top: 4px;
+}
+.close-btn {
+  width: 34px; height: 34px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  color: var(--ink-3);
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  transition: all .15s ease;
+  flex-shrink: 0;
+}
+.close-btn:hover { background: var(--bg-sunken); color: var(--ink); }
+.close-btn svg { width: 16px; height: 16px; }
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px 32px;
+}
+@media (max-width: 640px) {
+  .panel-head { padding: 18px 18px 14px; }
+  .panel-body { padding: 18px 18px 28px; }
+  .panel-location { font-size: 20px; }
+}
+
+.panel-section { margin-bottom: 26px; }
+.panel-section-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.panel-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  margin-left: 4px;
+}
+
+/* Detail panel — larger flow diagram */
+.flow-large {
+  grid-template-columns: 88px 1fr 110px 1fr 88px;
+  padding: 18px 12px 14px;
+}
+.flow-large .flow-icon { width: 48px; height: 48px; border-radius: 10px; }
+.flow-large .flow-icon svg { width: 22px; height: 22px; }
+.flow-large .flow-line-ac, .flow-large .flow-line-out { margin-top: 24px; }
+.flow-large .flow-bat-shape { width: 72px; height: 26px; }
+.flow-large .flow-bat-pct { font-size: 15px; }
+.flow-large .flow-val { font-size: 12px; }
+
+/* Live readings grid */
+.live-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+@media (max-width: 480px) { .live-metrics { grid-template-columns: repeat(2, 1fr); } }
+.live-metric {
+  background: var(--bg-elev);
+  padding: 14px 12px;
+  min-height: 82px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.live-metric-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.live-metric-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -.02em;
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  font-variant-numeric: tabular-nums;
+  transition: color .2s ease;
+}
+.live-metric-value.warn { color: var(--warn-strong); }
+.live-metric-value.crit { color: var(--crit-strong); animation: valueThrob 1.1s ease-in-out infinite; }
+.live-metric-value.dead { color: var(--crit); }
+.live-metric-value .unit {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0;
+}
+
+/* Equipment */
+.equipment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.equipment-item:last-child { border-bottom: none; }
+.equipment-icon {
+  width: 38px; height: 38px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+}
+.equipment-icon svg { width: 18px; height: 18px; }
+.equipment-info { flex: 1; min-width: 0; }
+.equipment-name {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 13.5px;
+}
+.equipment-purpose {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin-top: 2px;
+}
+.equipment-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent);
+  margin-top: 6px;
+  padding: 3px 7px;
+  border: 1px solid var(--accent-soft);
+  border-radius: 4px;
+  background: var(--accent-soft);
+  transition: all .15s ease;
+}
+.equipment-link:hover { border-color: var(--accent); text-decoration: none; }
+.equipment-link svg { width: 10px; height: 10px; }
+
+/* Coverage */
+.coverage-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--line);
+  align-items: baseline;
+}
+.coverage-item:last-child { border-bottom: none; }
+.floor-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -.01em;
+  min-width: 62px;
+  padding: 4px 8px;
+  background: var(--accent-soft);
+  border-radius: 4px;
+  text-align: center;
+}
+.coverage-desc {
+  font-size: 12.5px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* Info rows */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 12.5px;
+  gap: 12px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-row .label { color: var(--ink-2); }
+.info-row .value {
+  color: var(--ink);
+  font-weight: 600;
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Runtime callout */
+.runtime-callout {
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  padding: 14px 16px;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  margin-top: 4px;
+}
+.runtime-callout.warn { background: var(--warn-soft); border-left-color: var(--warn); }
+.runtime-callout.crit { background: var(--crit-soft); border-left-color: var(--crit); }
+.runtime-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--accent);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.runtime-callout.warn .runtime-value { color: var(--warn-strong); }
+.runtime-callout.crit .runtime-value { color: var(--crit-strong); }
+.runtime-caption {
+  font-size: 11.5px;
+  color: var(--ink-2);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+/* Event log */
+.event-log {
+  background: var(--bg-code);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+}
+.event-log-row {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 78px 60px 1fr;
+  gap: 8px;
+  align-items: baseline;
+}
+.event-log-row:last-child { border-bottom: none; }
+.event-log-row .t   { color: var(--ink-3); font-size: 10.5px; }
+.event-log-row .lvl {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  text-align: center;
+  letter-spacing: .04em;
+}
+.event-log-row .lvl.info { background: var(--pending-soft); color: var(--ink-2); }
+.event-log-row .lvl.ok   { background: var(--ok-soft);      color: var(--ok-strong); }
+.event-log-row .lvl.warn { background: var(--warn-soft);    color: var(--warn-strong); }
+.event-log-row .lvl.crit { background: var(--crit-soft);    color: var(--crit-strong); }
+.event-log-row .msg { color: var(--ink); font-family: 'Inter', sans-serif; font-size: 12px; }
+
+/* Actions */
+.actions-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+@media (max-width: 480px) { .actions-row { grid-template-columns: repeat(2, 1fr); } }
+.action-btn {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg-elev);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all .15s ease;
+  cursor: not-allowed;
+  opacity: .78;
+}
+.action-btn svg { width: 13px; height: 13px; color: var(--ink-3); }
+.action-btn:hover { border-color: var(--line-strong); }
+
+/* Footer */
+.foot-note {
+  padding: 28px 0 24px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-3);
+  font-size: 11.5px;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.foot-note a { color: var(--ink-2); border-bottom: 1px solid var(--line-strong); }
+.foot-note a:hover { text-decoration: none; color: var(--ink); }
+
+/* Card refresh flash — kept subtle, only fires on manual refresh */
+@keyframes refreshFlash {
+  0%   { box-shadow: 0 0 0 0 var(--accent); }
+  100% { box-shadow: 0 0 0 12px transparent; }
+}
+.ups-card.refreshed { animation: refreshFlash .6s ease-out; }
+
+</style>
+</head>
+<body>
+
+<!-- ============ ALERT BANNER ============ -->
+<div class="alert-banner" id="alert-banner" data-active="false" data-level="crit" data-flashing="true" role="alert" aria-live="assertive">
+  <div class="alert-banner-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+      <line x1="12" y1="9"  x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  </div>
+  <div class="alert-banner-body">
+    <div class="alert-banner-title">
+      <span id="alert-title">Attention required</span>
+      <span class="badge" id="alert-count">1 ACTIVE</span>
+    </div>
+    <div class="alert-banner-msg" id="alert-msg">—</div>
+  </div>
+  <div class="alert-banner-actions">
+    <button class="alert-btn" id="alert-silence" title="Silence audio only">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 5 6 9H2v6h4l5 4V5z"/>
+        <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+      </svg>
+      Silence
+    </button>
+    <button class="alert-btn primary" id="alert-ack">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      Acknowledge
+    </button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-header">
+    <div class="header-row">
+      <div class="brand">
+        <div class="brand-mark" title="UPS Ops">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-eyebrow">Hotel NEO+ Penang · Infrastructure</div>
+          <h1>UPS Operations <span>· 6 units</span></h1>
+        </div>
+      </div>
+      <div class="header-status">
+        <div class="conn-pill" id="conn-pill" data-mode="mock" title="Data source">
+          <span class="dot"></span>
+          <span id="conn-label">MOCK DATA</span>
+        </div>
+        <div class="time-pill" title="Last update">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span id="last-updated">just now</span>
+        </div>
+        <div class="header-controls">
+          <button class="icon-btn" id="sound-toggle" aria-label="Sound alerts" title="Sound alerts">
+            <svg id="sound-on-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 5 6 9H2v6h4l5 4V5z"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+            <svg id="sound-off-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+              <path d="M11 5 6 9H2v6h4l5 4V5z"/>
+              <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+            </svg>
+          </button>
+          <button class="icon-btn refresh-btn" id="refresh" aria-label="Refresh data" title="Refresh">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/>
+              <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/>
+            </svg>
+          </button>
+          <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+            <svg id="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+            </svg>
+            <svg id="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ KPI STRIP ============ -->
+  <section class="kpi-strip" aria-label="System overview">
+    <div class="kpi kpi-hero">
+      <div class="kpi-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5"/>
+        </svg>
+        System health
+      </div>
+      <div class="kpi-value ok" id="kpi-health">
+        All clear
+        <span class="unit" id="kpi-health-sub">4 online · 2 pending install</span>
+      </div>
+      <div class="status-strip" id="status-strip"></div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+        </svg>
+        Total UPS
+      </div>
+      <div class="kpi-value" id="kpi-total">6</div>
+      <div class="kpi-sub">across the property</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        On battery
+      </div>
+      <div class="kpi-value ok" id="kpi-onbatt">0</div>
+      <div class="kpi-sub" id="kpi-onbatt-sub">running on mains</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+        Total draw
+      </div>
+      <div class="kpi-value" id="kpi-draw">—<span class="unit">W</span></div>
+      <div class="kpi-sub" id="kpi-draw-sub">— of — capacity</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="13" x2="23" y2="11"/>
+        </svg>
+        Battery health
+      </div>
+      <div class="kpi-value ok" id="kpi-batt">100<span class="unit">%</span></div>
+      <div class="kpi-sub" id="kpi-batt-sub">all cells fresh</div>
+    </div>
+  </section>
+
+  <!-- ============ UPS GRID ============ -->
+  <section aria-label="UPS units">
+    <div class="section-head">
+      <h2>Units by location <span class="count" id="unit-count">6 units</span></h2>
+      <div class="hint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 5H2v7l6.29 6.29c.94.94 2.48.94 3.42 0l3.58-3.58c.94-.94.94-2.48 0-3.42L9 5z"/>
+          <line x1="6" y1="9" x2="6.01" y2="9"/>
+        </svg>
+        Tap any unit for live readings, equipment powered, and coverage
+      </div>
+    </div>
+    <div class="ups-grid" id="ups-grid"></div>
+  </section>
+
+  <!-- ============ DEMO CONTROLS ============ -->
+  <section class="demo-panel" aria-label="Simulation controls">
+    <div class="demo-head">
+      <h3>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;color:var(--ink-3)">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+        Simulation controls
+        <span class="badge">DEMO</span>
+      </h3>
+      <p>Trigger states to test alerting. In production these disappear — NUT drives everything.</p>
+    </div>
+    <div class="demo-actions">
+      <button class="demo-btn warn" data-sim="battery"    title="Simulate mains outage on Level 7">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Trip UPS to battery
+      </button>
+      <button class="demo-btn crit" data-sim="lowbatt"    title="Simulate low battery on Level 15">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>
+        Drain battery low
+      </button>
+      <button class="demo-btn crit" data-sim="overload"   title="Simulate overload on MDF">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Overload MDF
+      </button>
+      <button class="demo-btn ok" data-sim="restore"      title="Restore all UPS to normal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Restore all
+      </button>
+    </div>
+  </section>
+
+  <div class="foot-note">
+    <div>NUT-backed monitoring · this dashboard is a preview UI for Ops &amp; Finance review</div>
+    <div>v0.3 · <a href="#">Configuration</a> · <a href="#">Event history</a></div>
+  </div>
+</div>
+
+<!-- ============ DETAIL PANEL ============ -->
+<div class="modal-scrim" id="scrim"></div>
+<aside class="detail-panel" id="detail-panel" aria-hidden="true" role="dialog" aria-labelledby="panel-location">
+  <div class="panel-head">
+    <div class="panel-head-content">
+      <div class="panel-eyebrow" id="panel-eyebrow">Level 7</div>
+      <div class="panel-location" id="panel-location">Level 7</div>
+      <div class="panel-sub" id="panel-sub">F07 Engineering Storeroom · Distribution #2</div>
+    </div>
+    <button class="close-btn" id="close-panel" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+  <div class="panel-body" id="panel-body"></div>
+</aside>
+
+<script>
+/* ==========================================================
+   DATA — UPS inventory
+   In production, replace this array with a fetch loop that
+   pulls from the NUT WebGUI API on the central Pi. The shape
+   below mirrors what `upsc <ups>` returns per unit — see the
+   auto-tick block at the bottom for the exact swap.
+   ========================================================== */
+const UPS = [
+  {
+    id: 'l07', location: 'Level 7', rackName: 'F07 Engineering Storeroom',
+    distribution: 'Distribution #2', model: 'Hikvision DS-UPS3000',
+    capacityVA: 3000, capacityW: 1800, status: 'online', installed: true,
+    metrics: { inputV: 232, outputV: 231, loadPct: 14, loadW: 255,
+      batteryPct: 100, batteryV: 54.2, runtimeMin: 45, freq: 50.0, charging: false },
+    peakLoadW: 255, peakRuntimeMin: 45,
+    equipment: [
+      { name: 'Meraki MS130-48P',    type: 'wifi', purpose: 'Wi-Fi network — 21 access points', link: null },
+      { name: 'TP-Link TL-SG3452XP', type: 'cctv', purpose: 'CCTV camera network',              link: 'http://192.168.100.2/' }
+    ],
+    coverage: [
+      { floor: 'Floor 6', desc: 'Housekeeping Office' },
+      { floor: 'Floor 7', desc: 'Function rooms (Avatar, Arcadia, Amazon, Corridor)' },
+      { floor: 'Floor 8', desc: 'Rooms 800, 803, 807, 808, 811, 812, 817 & Lift Lobby' },
+      { floor: 'Floor 9', desc: 'Rooms 900, 903, 907, 908, 911, 912, 917 & Lift Lobby' }
+    ],
+    battery: { count: 4, spec: '12V/9Ah lead-acid', installedDate: '13 Aug 2026', nextReplace: 'Aug 2029' }
+  },
+  {
+    id: 'l15', location: 'Level 15', rackName: 'F15 Server Rack',
+    distribution: 'Distribution #3', model: 'Hikvision DS-UPS3000',
+    capacityVA: 3000, capacityW: 1800, status: 'online', installed: true,
+    metrics: { inputV: 234, outputV: 233, loadPct: 19, loadW: 345,
+      batteryPct: 100, batteryV: 54.4, runtimeMin: 30, freq: 50.0, charging: false },
+    peakLoadW: 345, peakRuntimeMin: 30,
+    equipment: [
+      { name: 'Meraki MS120-48LP', type: 'wifi', purpose: 'Wi-Fi network — 48 access points', link: null },
+      { name: 'Cisco SG220-26P',   type: 'cctv', purpose: 'CCTV camera network',              link: null }
+    ],
+    coverage: [
+      { floor: 'Floor 10', desc: 'Rooms 1000, 1003, 1007, 1008, 1011, 1012, 1017 & Lift Lobby' },
+      { floor: 'Floor 11', desc: 'Rooms 1100, 1103, 1107, 1108, 1111, 1112, 1117 & Lift Lobby' },
+      { floor: 'Floor 12', desc: 'Rooms 1200, 1203, 1207, 1208, 1211, 1212, 1217 & Lift Lobby' },
+      { floor: 'Floor 15', desc: 'Rooms 1500, 1503, 1507, 1508, 1511, 1512, 1517 & Lift Lobby' },
+      { floor: 'Floor 16', desc: 'Rooms 1600, 1603, 1607, 1608, 1611, 1612, 1617 & Lift Lobby' },
+      { floor: 'Floor 17', desc: 'Rooms 1700, 1703, 1707, 1708, 1711, 1712, 1717 & Lift Lobby' }
+    ],
+    battery: { count: 4, spec: '12V/9Ah lead-acid', installedDate: '21 Aug 2026', nextReplace: 'Aug 2029' }
+  },
+  {
+    id: 'l21', location: 'Level 21', rackName: 'Network Rack',
+    distribution: 'Distribution — TBD', model: 'Hikvision DS-UPS3000',
+    capacityVA: 3000, capacityW: 1800, status: 'pending', installed: false,
+    metrics: null, peakLoadW: null, peakRuntimeMin: null,
+    equipment: [], coverage: [], battery: null
+  },
+  {
+    id: 'l26', location: 'Level 26', rackName: 'Network Rack',
+    distribution: 'Distribution — TBD', model: 'Hikvision DS-UPS3000',
+    capacityVA: 3000, capacityW: 1800, status: 'pending', installed: false,
+    metrics: null, peakLoadW: null, peakRuntimeMin: null,
+    equipment: [], coverage: [], battery: null
+  },
+  {
+    id: 'mdf', location: 'MDF Room', rackName: 'Main Distribution Frame',
+    distribution: 'Core network', model: 'Hikvision DS-UPS3000',
+    capacityVA: 3000, capacityW: 1800, status: 'online', installed: true,
+    metrics: { inputV: 231, outputV: 230, loadPct: 2, loadW: 30,
+      batteryPct: 100, batteryV: 54.1, runtimeMin: 240, freq: 50.0, charging: false },
+    peakLoadW: 40, peakRuntimeMin: 240,
+    equipment: [
+      { name: 'D-Link DPN-FX3060V',       type: 'router', purpose: 'Unifi 2 Gbps fibre ONT',                   link: null },
+      { name: 'Huawei EchoLife EG8145V5', type: 'router', purpose: 'MYISP 100 Mbps fibre ONT',                 link: null },
+      { name: 'ZTE ZXHN F620',            type: 'router', purpose: 'Unifi hotel phone line — 04-255-1000',    link: null }
+    ],
+    coverage: [ { floor: 'MDF', desc: 'Main distribution frame equipment — every floor depends on this' } ],
+    battery: { count: 4, spec: '12V/9Ah lead-acid', installedDate: '29 Aug 2026', nextReplace: 'Aug 2029' }
+  },
+  {
+    id: 'srv', location: 'Server Room', rackName: '15U Server Rack',
+    distribution: 'Critical infrastructure', model: 'APC Smart-UPS SRT SRT5KRMXLI',
+    capacityVA: 5000, capacityW: 4500, status: 'pending', installed: false,
+    metrics: null, peakLoadW: null, peakRuntimeMin: null,
+    equipment: [
+      { name: 'Property Management System', type: 'server',  purpose: 'Hotel PMS server', link: null },
+      { name: 'File & backup storage',      type: 'storage', purpose: 'On-site NAS',      link: null },
+      { name: 'Virtualization host',        type: 'server',  purpose: 'Internal apps',    link: null }
+    ],
+    coverage: [ { floor: 'Server Room', desc: 'All on-site servers, storage, and virtualization' } ],
+    battery: { count: 2, spec: 'APCRBC140 (hot-swap)', installedDate: 'TBD', nextReplace: 'TBD' }
+  }
+];
+
+/* ==========================================================
+   ICONS
+   ========================================================== */
+const ICONS = {
+  wifi:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>',
+  cctv:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20l20-6-1-4-16 5-2-2v3"/><path d="M4 20h6"/><circle cx="17.5" cy="9.5" r="1.5"/></svg>',
+  switch:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2"/><line x1="6" y1="12" x2="6.01" y2="12"/><line x1="10" y1="12" x2="10.01" y2="12"/><line x1="14" y1="12" x2="14.01" y2="12"/><line x1="18" y1="12" x2="18.01" y2="12"/></svg>',
+  router:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 18h.01M10 18h.01"/><path d="M12 14V6"/><path d="M8 8a4 4 0 0 1 8 0"/><path d="M5 5a7 7 0 0 1 14 0"/></svg>',
+  server:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2"  width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>',
+  storage: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>',
+  ext:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>',
+  chevron: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
+  test:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+  buzzer:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+  logs:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>',
+  bolt:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+  ups:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 10 h6 M9 14 h6 M12 7 v.01"/></svg>',
+  monitor: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'
+};
+
+/* ==========================================================
+   ALERT STATE
+   ========================================================== */
+const alertState = new Map(); // "upsId::code" → { level, code, message, ackAt, firstAt }
+let soundEnabled = false;
+let soundInterval = null;
+let audioCtx = null;
+
+const THRESH = {
+  battLow:   20,
+  battCrit:  10,
+  loadWarn:  70,
+  loadCrit:  90
+};
+
+function detectAlerts() {
+  const found = [];
+  for (const u of UPS) {
+    if (!u.installed || !u.metrics) continue;
+    if (u.status === 'battery') {
+      found.push({ upsId: u.id, level: 'crit', code: 'ON_BATTERY',
+        message: `<strong>${u.location}</strong> is running on battery — mains power lost` });
+    }
+    if (u.status === 'critical') {
+      found.push({ upsId: u.id, level: 'crit', code: 'CRITICAL',
+        message: `<strong>${u.location}</strong> in critical state — check unit immediately` });
+    }
+    if (u.metrics.batteryPct <= THRESH.battCrit) {
+      found.push({ upsId: u.id, level: 'crit', code: 'BATT_CRIT',
+        message: `<strong>${u.location}</strong> battery at ${u.metrics.batteryPct}% — shutdown imminent` });
+    } else if (u.metrics.batteryPct <= THRESH.battLow) {
+      found.push({ upsId: u.id, level: 'warn', code: 'BATT_LOW',
+        message: `<strong>${u.location}</strong> battery low (${u.metrics.batteryPct}%)` });
+    }
+    if (u.metrics.loadPct >= THRESH.loadCrit) {
+      found.push({ upsId: u.id, level: 'crit', code: 'OVERLOAD',
+        message: `<strong>${u.location}</strong> overloaded (${u.metrics.loadPct}% of ${u.capacityW}W)` });
+    } else if (u.metrics.loadPct >= THRESH.loadWarn) {
+      found.push({ upsId: u.id, level: 'warn', code: 'HIGH_LOAD',
+        message: `<strong>${u.location}</strong> load high (${u.metrics.loadPct}%)` });
+    }
+  }
+  return found;
+}
+
+function reconcileAlerts() {
+  const active = detectAlerts();
+  const activeKeys = new Set(active.map(a => `${a.upsId}::${a.code}`));
+  for (const [key] of alertState) {
+    if (!activeKeys.has(key)) {
+      alertState.delete(key);
+      logEvent(`Alert cleared: ${key.split('::').join(' — ')}`, 'ok');
+    }
+  }
+  for (const a of active) {
+    const key = `${a.upsId}::${a.code}`;
+    if (!alertState.has(key)) {
+      alertState.set(key, { ...a, ackAt: null, firstAt: Date.now() });
+      logEvent(`Alert raised: ${a.upsId} — ${a.code}`, a.level);
+    } else {
+      const prev = alertState.get(key);
+      alertState.set(key, { ...prev, message: a.message, level: a.level });
+    }
+  }
+  renderAlertBanner();
+}
+
+function renderAlertBanner() {
+  const banner = document.getElementById('alert-banner');
+  const alerts = [...alertState.values()];
+  if (alerts.length === 0) {
+    banner.setAttribute('data-active', 'false');
+    stopSoundLoop();
+    return;
+  }
+  const anyCrit = alerts.some(a => a.level === 'crit');
+  const anyUnacked = alerts.some(a => !a.ackAt);
+
+  banner.setAttribute('data-active', 'true');
+  banner.setAttribute('data-level', anyCrit ? 'crit' : 'warn');
+  banner.setAttribute('data-flashing', anyUnacked ? 'true' : 'false');
+
+  const primary = alerts.find(a => !a.ackAt) || alerts[0];
+  document.getElementById('alert-title').textContent =
+    anyUnacked
+      ? (anyCrit ? 'CRITICAL — Attention required' : 'Warning — Attention required')
+      : 'Acknowledged — condition still active';
+  document.getElementById('alert-count').textContent = `${alerts.length} ACTIVE`;
+  document.getElementById('alert-msg').innerHTML = alerts.length === 1
+    ? primary.message
+    : `${primary.message} <span style="opacity:.75">· +${alerts.length - 1} more</span>`;
+
+  if (anyUnacked && soundEnabled) startSoundLoop(anyCrit);
+  else stopSoundLoop();
+}
+
+function acknowledgeAll() {
+  const now = Date.now();
+  for (const [k, v] of alertState) {
+    if (!v.ackAt) alertState.set(k, { ...v, ackAt: now });
+  }
+  stopSoundLoop();
+  renderAlertBanner();
+  updateGrid();
+  logEvent('All active alerts acknowledged by operator', 'info');
+}
+
+function upsAlertLevel(upsId) {
+  let level = null;
+  let acked = true;
+  for (const a of alertState.values()) {
+    if (a.upsId !== upsId) continue;
+    if (a.level === 'crit') level = 'crit';
+    else if (level !== 'crit' && a.level === 'warn') level = 'warn';
+    if (!a.ackAt) acked = false;
+  }
+  return { level, acked };
+}
+
+/* ==========================================================
+   SOUND
+   ========================================================== */
+function ensureAudio() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch (e) { audioCtx = null; }
+  }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+function beep(freq, duration) {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'square';
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0, audioCtx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.14, audioCtx.currentTime + 0.01);
+  gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + duration);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+function startSoundLoop(crit) {
+  if (!soundEnabled) return;
+  ensureAudio();
+  stopSoundLoop();
+  const doBeep = () => {
+    if (crit) { beep(880, 0.14); setTimeout(() => beep(1100, 0.14), 200); }
+    else      { beep(660, 0.10); }
+  };
+  doBeep();
+  soundInterval = setInterval(doBeep, crit ? 3500 : 6000);
+}
+function stopSoundLoop() {
+  if (soundInterval) { clearInterval(soundInterval); soundInterval = null; }
+}
+
+/* ==========================================================
+   EVENT LOG + LOAD HISTORY
+   ========================================================== */
+const eventLog = [];
+function logEvent(msg, level = 'info') {
+  eventLog.unshift({ t: new Date(), level, msg });
+  if (eventLog.length > 100) eventLog.length = 100;
+}
+function fmtTime(d) {
+  const p = n => String(n).padStart(2, '0');
+  return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+const loadHistory = new Map(); // upsId → number[]
+function trackLoad(u) {
+  if (!u.installed || !u.metrics) return;
+  const arr = loadHistory.get(u.id) || [];
+  arr.push(u.metrics.loadPct);
+  if (arr.length > 30) arr.shift();
+  loadHistory.set(u.id, arr);
+}
+
+/* ==========================================================
+   HELPERS
+   ========================================================== */
+const grid = document.getElementById('ups-grid');
+
+function batteryLevel(pct) {
+  if (pct >= 60) return 'high';
+  if (pct >= 25) return 'medium';
+  return 'low';
+}
+function loadLevel(pct) {
+  if (pct >= 90) return 'crit';
+  if (pct >= 70) return 'warn';
+  return '';
+}
+function statusLabel(status, installed) {
+  if (!installed) return { text: 'Pending install', cls: 'pending' };
+  const map = {
+    online:   { text: 'Online',      cls: 'ok'   },
+    battery:  { text: 'On battery',  cls: 'warn' },
+    critical: { text: 'Critical',    cls: 'crit' },
+    offline:  { text: 'Offline',     cls: 'pending' }
+  };
+  return map[status] || { text: status, cls: 'pending' };
+}
+function battClassFor(pct) {
+  if (pct <= THRESH.battCrit) return 'crit';
+  if (pct <= THRESH.battLow)  return 'warn';
+  return '';
+}
+/* Estimate minutes to reach 100% for typical SLA/lead-acid UPS.
+   Two-phase model: bulk (0-80%) is roughly linear at ~2.25 min/%, then
+   absorption (80-100%) tapers to ~6 min/%. Whole recharge ≈ 5h from empty,
+   ~2h from 80%. Good enough for a display estimate.
+   In production, prefer NUT's `battery.charge.time.remaining` when the UPS
+   reports it (many APC/Eaton models do); fall back to this formula otherwise. */
+function minutesToFull(pct) {
+  if (pct >= 100) return 0;
+  if (pct >= 80)  return Math.round((100 - pct) * 6);
+  return Math.round(120 + (80 - pct) * 2.25);
+}
+function formatEta(mins) {
+  if (mins <= 0)  return '';
+  if (mins < 1)   return '<1m to full';
+  if (mins < 60)  return `${mins}m to full`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return m > 0 ? `${h}h ${m}m to full` : `${h}h to full`;
+}
+/* Only show ETA while actively charging AND not at 100%. */
+function chargeEtaText(m) {
+  if (!m || !m.charging || m.batteryPct >= 100) return '';
+  return formatEta(minutesToFull(m.batteryPct));
+}
+function sparklinePoints(values, w, h) {
+  if (values.length < 2) return '';
+  const step = w / (values.length - 1);
+  return values.map((v, i) =>
+    `${(i * step).toFixed(1)},${(h - Math.min(100, v) / 100 * h).toFixed(1)}`
+  ).join(' ');
+}
+
+/* ==========================================================
+   RENDER — initial (only runs ONCE per card creation)
+   ========================================================== */
+function renderCard(u, isPanel) {
+  const s = statusLabel(u.status, u.installed);
+  const m = u.metrics;
+  const equipCount = u.equipment.length;
+  const flowCls = isPanel ? 'flow flow-large' : 'flow';
+
+  const flowHTML = u.installed && m ? `
+    <div class="${flowCls}">
+      <div class="flow-ac flow-node" data-active="true">
+        <div class="flow-icon">${ICONS.bolt}</div>
+        <div class="flow-label">Mains</div>
+        <div class="flow-val" data-field="ac-val">${m.inputV}V</div>
+      </div>
+      <div class="flow-line flow-line-ac" data-active="true"></div>
+      <div class="flow-ups flow-node">
+        <div class="flow-icon">${ICONS.ups}</div>
+        <div class="flow-label">UPS</div>
+        <div class="flow-val" data-field="ups-status">ONLINE</div>
+      </div>
+      <div class="flow-line flow-line-out" data-active="true"></div>
+      <div class="flow-load flow-node">
+        <div class="flow-icon">${ICONS.monitor}</div>
+        <div class="flow-label">Load</div>
+        <div class="flow-val" data-field="load-val-flow">${m.outputV}V · ${m.loadW}W</div>
+      </div>
+      <div class="flow-branch" data-mode="idle"></div>
+      <div class="flow-bat" data-level="${batteryLevel(m.batteryPct)}" data-mode="idle">
+        <div class="flow-bat-shape">
+          <div class="flow-bat-fill" data-field="bat-fill" style="width: ${m.batteryPct}%"></div>
+        </div>
+        <div class="flow-bat-pct ${battClassFor(m.batteryPct)}" data-field="bat-pct">${m.batteryPct}<span>%</span></div>
+        <div class="flow-label">Battery</div>
+        <div class="flow-bat-eta" data-field="bat-eta">${chargeEtaText(m)}</div>
+      </div>
+    </div>
+  ` : `
+    <div class="${flowCls}" style="opacity:.55">
+      <div class="flow-ac flow-node"><div class="flow-icon">${ICONS.bolt}</div><div class="flow-label">Mains</div><div class="flow-val">—</div></div>
+      <div class="flow-line" data-active="false"></div>
+      <div class="flow-ups flow-node"><div class="flow-icon">${ICONS.ups}</div><div class="flow-label">UPS</div><div class="flow-val">—</div></div>
+      <div class="flow-line" data-active="false"></div>
+      <div class="flow-load flow-node"><div class="flow-icon">${ICONS.monitor}</div><div class="flow-label">Load</div><div class="flow-val">—</div></div>
+      <div class="flow-branch"></div>
+      <div class="flow-bat" data-level="high"><div class="flow-bat-shape"><div class="flow-bat-fill" style="width:0%"></div></div><div class="flow-bat-pct">—</div><div class="flow-label">Battery</div></div>
+    </div>
+  `;
+
+  const metricsHTML = u.installed && m ? `
+    <div class="metric-grid">
+      <div class="metric">
+        <div class="metric-label">${ICONS.bolt} Input</div>
+        <div class="metric-value" data-field="input-v">${m.inputV}<span class="u">V</span></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">${ICONS.chevron.replace('polyline points="9 18 15 12 9 6"', 'polyline points="12 6 12 12 16 14"').replace('viewBox="0 0 24 24"', 'viewBox="0 0 24 24"')} Runtime</div>
+        <div class="metric-value" data-field="runtime">${m.runtimeMin}<span class="u">min</span></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Output</div>
+        <div class="metric-value" data-field="output-v">${m.outputV}<span class="u">V</span></div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Frequency</div>
+        <div class="metric-value" data-field="freq">${m.freq.toFixed(1)}<span class="u">Hz</span></div>
+      </div>
+    </div>
+    <div class="load-bar">
+      <div class="load-bar-head">
+        <span class="left">
+          Load
+          <svg class="spark" data-field="spark" viewBox="0 0 60 14" width="60" height="14" preserveAspectRatio="none">
+            <polyline points=""/>
+          </svg>
+        </span>
+        <span class="val" data-field="load-val-text">${m.loadPct}% · ${m.loadW}W / ${u.capacityW}W</span>
+      </div>
+      <div class="load-bar-track">
+        <div class="load-bar-fill ${loadLevel(m.loadPct)}" data-field="load-fill" style="width: ${m.loadPct}%"></div>
+      </div>
+    </div>
+  ` : `
+    <div class="metric-grid">
+      <div class="metric" style="grid-column: span 2">
+        <div class="metric-label">Status</div>
+        <div class="metric-value" style="font-size:12px;color:var(--ink-3);font-family:'Inter',sans-serif;font-weight:500">Awaiting install</div>
+      </div>
+    </div>
+    <div class="load-bar">
+      <div class="load-bar-head"><span>Coverage</span><span class="val" style="color:var(--ink-3)">To be scheduled</span></div>
+      <div class="load-bar-track"><div class="load-bar-fill" style="width:0%"></div></div>
+    </div>
+  `;
+
+  const alertInfo = upsAlertLevel(u.id);
+  const alertClass = alertInfo.level
+    ? ` alert-${alertInfo.level === 'crit' ? 'critical' : 'warn'}${alertInfo.acked ? ' alert-acked' : ''}`
+    : '';
+
+  return `
+    <button class="ups-card${alertClass}" data-id="${u.id}" data-status="${u.installed ? u.status : 'pending'}" aria-label="View details for ${u.location}">
+      <div class="card-head">
+        <div>
+          <div class="card-location">${u.location}</div>
+          <div class="card-rackname">${u.rackName}</div>
+        </div>
+        <div class="status-pill ${s.cls}" data-field="status-pill"><span class="pulse"></span>${s.text}</div>
+      </div>
+      <div class="card-model">
+        <span>${u.model}</span>
+        <span class="capacity">${u.capacityVA/1000} kVA</span>
+        ${u.installed ? '<span class="live-tag">LIVE</span>' : ''}
+      </div>
+      ${flowHTML}
+      ${metricsHTML}
+      <div class="card-cta">
+        <span class="equipment-count">
+          ${equipCount > 0 ? `${equipCount} device${equipCount !== 1 ? 's' : ''} powered` : 'No devices listed yet'}
+        </span>
+        <span class="see">See details ${ICONS.chevron}</span>
+      </div>
+    </button>
+  `;
+}
+
+/* ==========================================================
+   PATCH — surgical in-place update, no DOM rebuild
+   ========================================================== */
+function setField(root, name, html) {
+  const el = root.querySelector(`[data-field="${name}"]`);
+  if (!el) return;
+  if (el.tagName === 'DIV' || el.tagName === 'SPAN') {
+    if (el.innerHTML !== html) el.innerHTML = html;
+  } else {
+    if (el.textContent !== html) el.textContent = html;
+  }
+}
+
+function patchCard(u) {
+  const card = grid.querySelector(`.ups-card[data-id="${u.id}"]`);
+  if (!card) return;
+
+  // Status
+  const s = statusLabel(u.status, u.installed);
+  const newStatus = u.installed ? u.status : 'pending';
+  if (card.dataset.status !== newStatus) card.dataset.status = newStatus;
+
+  // Status pill (only rewrite if changed)
+  const pill = card.querySelector('.status-pill');
+  const wantPillCls = `status-pill ${s.cls}`;
+  if (pill.className !== wantPillCls) {
+    pill.className = wantPillCls;
+    pill.innerHTML = `<span class="pulse"></span>${s.text}`;
+  } else {
+    // Ensure text is up to date even if class unchanged
+    const currentText = pill.textContent.trim();
+    if (currentText !== s.text) pill.innerHTML = `<span class="pulse"></span>${s.text}`;
+  }
+
+  // Alert classes
+  const alertInfo = upsAlertLevel(u.id);
+  const wantCrit  = alertInfo.level === 'crit';
+  const wantWarn  = alertInfo.level === 'warn';
+  const wantAcked = !!alertInfo.acked && alertInfo.level != null;
+  if (card.classList.contains('alert-critical') !== wantCrit) card.classList.toggle('alert-critical', wantCrit);
+  if (card.classList.contains('alert-warn')     !== wantWarn) card.classList.toggle('alert-warn',     wantWarn);
+  if (card.classList.contains('alert-acked')    !== wantAcked) card.classList.toggle('alert-acked',    wantAcked);
+
+  if (!u.installed || !u.metrics) return;
+  const m = u.metrics;
+  const onBattery = u.status === 'battery';
+
+  // Flow diagram — AC state
+  const acNode = card.querySelector('.flow-ac');
+  const acLine = card.querySelector('.flow-line-ac');
+  if (acNode.dataset.active !== (onBattery ? 'false' : 'true')) acNode.dataset.active = onBattery ? 'false' : 'true';
+  if (acLine.dataset.active !== (onBattery ? 'false' : 'true')) acLine.dataset.active = onBattery ? 'false' : 'true';
+
+  const acVal = card.querySelector('[data-field="ac-val"]');
+  const acText = onBattery ? 'FAILED' : `${m.inputV}V`;
+  const acCls  = onBattery ? 'flow-val dead' : 'flow-val';
+  if (acVal.textContent !== acText) acVal.textContent = acText;
+  if (acVal.className !== acCls) acVal.className = acCls;
+
+  // UPS status label (inside the flow node)
+  const upsStatusText =
+    u.status === 'battery'  ? 'ON BATTERY' :
+    u.status === 'critical' ? 'CRITICAL'   :
+    u.status === 'offline'  ? 'OFFLINE'    :
+    'ONLINE';
+  setField(card, 'ups-status', upsStatusText);
+
+  // Load node text (voltage · watts)
+  setField(card, 'load-val-flow', `${m.outputV}V · ${m.loadW}W`);
+
+  // Branch mode
+  const branch = card.querySelector('.flow-branch');
+  const branchMode = onBattery ? 'draining' : (m.charging ? 'charging' : 'idle');
+  if (branch.dataset.mode !== branchMode) branch.dataset.mode = branchMode;
+
+  // Battery
+  const battNode = card.querySelector('.flow-bat');
+  const battFill = card.querySelector('[data-field="bat-fill"]');
+  const battPct  = card.querySelector('[data-field="bat-pct"]');
+  const battLvl  = batteryLevel(m.batteryPct);
+  if (battNode.dataset.level !== battLvl) battNode.dataset.level = battLvl;
+  if (battNode.dataset.mode  !== branchMode) battNode.dataset.mode = branchMode;
+  const wantWidth = `${m.batteryPct}%`;
+  if (battFill.style.width !== wantWidth) battFill.style.width = wantWidth;
+  const battCls = `flow-bat-pct${battClassFor(m.batteryPct) ? ' ' + battClassFor(m.batteryPct) : ''}`;
+  if (battPct.className !== battCls) battPct.className = battCls;
+  const wantBattHTML = `${m.batteryPct}<span>%</span>`;
+  if (battPct.innerHTML !== wantBattHTML) battPct.innerHTML = wantBattHTML;
+  const battEta = card.querySelector('[data-field="bat-eta"]');
+  if (battEta) {
+    const wantEta = chargeEtaText(m);
+    if (battEta.textContent !== wantEta) battEta.textContent = wantEta;
+  }
+
+  // 2x2 metric grid
+  setField(card, 'input-v',  onBattery ? `<span style="color:var(--crit)">0</span><span class="u">V</span>` : `${m.inputV}<span class="u">V</span>`);
+  setField(card, 'output-v', `${m.outputV}<span class="u">V</span>`);
+  setField(card, 'runtime',  `${m.runtimeMin}<span class="u">min</span>`);
+  setField(card, 'freq',     onBattery ? `<span style="color:var(--crit)">0.0</span><span class="u">Hz</span>` : `${m.freq.toFixed(1)}<span class="u">Hz</span>`);
+
+  // Load bar
+  const loadFill = card.querySelector('[data-field="load-fill"]');
+  const wantLoadCls = `load-bar-fill${loadLevel(m.loadPct) ? ' ' + loadLevel(m.loadPct) : ''}`;
+  if (loadFill.className !== wantLoadCls) loadFill.className = wantLoadCls;
+  if (loadFill.style.width !== `${m.loadPct}%`) loadFill.style.width = `${m.loadPct}%`;
+  setField(card, 'load-val-text', `${m.loadPct}% · ${m.loadW}W / ${u.capacityW}W`);
+
+  // Sparkline
+  const spark = card.querySelector('[data-field="spark"]');
+  if (spark) {
+    const hist = loadHistory.get(u.id) || [];
+    const line = spark.querySelector('polyline');
+    line.setAttribute('points', sparklinePoints(hist, 60, 14));
+    const lvl = loadLevel(m.loadPct);
+    const wantSparkLvl = lvl || '';
+    if ((spark.dataset.level || '') !== wantSparkLvl) {
+      if (wantSparkLvl) spark.dataset.level = wantSparkLvl;
+      else spark.removeAttribute('data-level');
+    }
+  }
+}
+
+/* ==========================================================
+   INITIAL RENDER + UPDATE LOOP (no rebuild on tick)
+   ========================================================== */
+let cardsRendered = false;
+function initGrid() {
+  grid.innerHTML = UPS.map(u => renderCard(u, false)).join('');
+  document.querySelectorAll('.ups-card').forEach(card => {
+    card.addEventListener('click', () => openDetail(card.dataset.id));
+  });
+  cardsRendered = true;
+}
+
+function updateGrid() {
+  if (!cardsRendered) { initGrid(); return; }
+  UPS.forEach(patchCard);
+  renderStatusStrip();
+  updateKPIs();
+  if (panelOpenId) patchDetailPanel(panelOpenId);
+  document.getElementById('unit-count').textContent = `${UPS.length} units`;
+}
+
+function renderStatusStrip() {
+  const strip = document.getElementById('status-strip');
+  const parts = UPS.map(u => {
+    const s = u.installed ? u.status : 'pending';
+    const cls = { online: 'ok', battery: 'warn', critical: 'crit', pending: 'pending', offline: 'pending' }[s] || 'pending';
+    return { cls, title: `${u.location} · ${s}` };
+  });
+  // patch-friendly: rebuild only if length or classes changed
+  const existing = strip.children;
+  if (existing.length !== parts.length) {
+    strip.innerHTML = parts.map(p => `<div class="seg ${p.cls}" title="${p.title}"></div>`).join('');
+  } else {
+    parts.forEach((p, i) => {
+      const seg = existing[i];
+      const wantCls = `seg ${p.cls}`;
+      if (seg.className !== wantCls) seg.className = wantCls;
+      if (seg.getAttribute('title') !== p.title) seg.setAttribute('title', p.title);
+    });
+  }
+}
+
+function updateKPIs() {
+  const installed = UPS.filter(u => u.installed);
+  const onbatt    = installed.filter(u => u.status === 'battery').length;
+  const crits     = installed.filter(u => u.status === 'critical').length;
+  const pending   = UPS.filter(u => !u.installed).length;
+
+  // Health
+  const health    = document.getElementById('kpi-health');
+  const healthSub = document.getElementById('kpi-health-sub');
+  let wantHealthCls, wantHealthText, wantSub;
+  if (crits > 0) {
+    wantHealthCls = 'kpi-value crit'; wantHealthText = 'Critical';
+    wantSub = `${crits} critical · ${onbatt} on battery`;
+  } else if (onbatt > 0) {
+    wantHealthCls = 'kpi-value warn'; wantHealthText = 'On battery';
+    wantSub = `${onbatt} unit${onbatt !== 1 ? 's' : ''} running on battery`;
+  } else {
+    wantHealthCls = 'kpi-value ok'; wantHealthText = 'All clear';
+    wantSub = `${installed.length} online · ${pending} pending install`;
+  }
+  if (health.className !== wantHealthCls) health.className = wantHealthCls;
+  // rewrite text node only (first child) then keep the sub span
+  if (health.childNodes[0].nodeValue !== wantHealthText + ' ') health.childNodes[0].nodeValue = wantHealthText + ' ';
+  if (healthSub.textContent !== wantSub) healthSub.textContent = wantSub;
+
+  // On battery
+  const ob = document.getElementById('kpi-onbatt');
+  const obCls = onbatt > 0 ? 'kpi-value warn' : 'kpi-value ok';
+  if (ob.className !== obCls) ob.className = obCls;
+  if (ob.textContent !== String(onbatt)) ob.textContent = onbatt;
+  const obSub = onbatt > 0 ? 'not on mains' : 'running on mains';
+  const obSubEl = document.getElementById('kpi-onbatt-sub');
+  if (obSubEl.textContent !== obSub) obSubEl.textContent = obSub;
+
+  // Total draw (sum of watts across installed units)
+  const totalW = installed.reduce((sum, u) => sum + (u.metrics ? u.metrics.loadW : 0), 0);
+  const totalCap = installed.reduce((sum, u) => sum + u.capacityW, 0);
+  const drawPct = totalCap ? Math.round(totalW / totalCap * 100) : 0;
+  const drawEl = document.getElementById('kpi-draw');
+  const drawCls = drawPct >= 90 ? 'kpi-value crit' : drawPct >= 70 ? 'kpi-value warn' : 'kpi-value';
+  if (drawEl.className !== drawCls) drawEl.className = drawCls;
+  const drawHTML = `${totalW}<span class="unit">W</span>`;
+  if (drawEl.innerHTML !== drawHTML) drawEl.innerHTML = drawHTML;
+  const drawSub = `${drawPct}% of ${totalCap}W capacity`;
+  const drawSubEl = document.getElementById('kpi-draw-sub');
+  if (drawSubEl.textContent !== drawSub) drawSubEl.textContent = drawSub;
+
+  // Battery health
+  const battPcts = installed.filter(u => u.metrics).map(u => u.metrics.batteryPct);
+  const minBatt = battPcts.length ? Math.min(...battPcts) : 100;
+  const avgBatt = battPcts.length ? Math.round(battPcts.reduce((a, b) => a + b, 0) / battPcts.length) : 100;
+  const kpiBatt = document.getElementById('kpi-batt');
+  const battCls = minBatt <= THRESH.battCrit ? 'kpi-value crit' : minBatt <= THRESH.battLow ? 'kpi-value warn' : 'kpi-value ok';
+  if (kpiBatt.className !== battCls) kpiBatt.className = battCls;
+  const battHTML = `${avgBatt}<span class="unit">%</span>`;
+  if (kpiBatt.innerHTML !== battHTML) kpiBatt.innerHTML = battHTML;
+  const battSubText = minBatt <= THRESH.battCrit ? `lowest: ${minBatt}% — critical` :
+                      minBatt <= THRESH.battLow  ? `lowest: ${minBatt}% — low` :
+                      'all cells fresh';
+  const battSubEl = document.getElementById('kpi-batt-sub');
+  if (battSubEl.textContent !== battSubText) battSubEl.textContent = battSubText;
+}
+
+/* ==========================================================
+   DETAIL PANEL
+   ========================================================== */
+const panel = document.getElementById('detail-panel');
+const scrim = document.getElementById('scrim');
+let panelOpenId = null;
+
+function openDetail(id) {
+  const u = UPS.find(x => x.id === id);
+  if (!u) return;
+  panelOpenId = id;
+
+  const eyebrowHTML = u.installed
+    ? `${u.distribution} <span class="live-tag">LIVE</span>`
+    : `Not yet installed · ${u.distribution}`;
+  document.getElementById('panel-eyebrow').innerHTML = eyebrowHTML;
+  document.getElementById('panel-location').textContent = u.location;
+  document.getElementById('panel-sub').textContent = `${u.rackName} · ${u.model}`;
+  document.getElementById('panel-body').innerHTML = renderDetailBody(u);
+
+  scrim.classList.add('open');
+  panel.classList.add('open');
+  panel.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+function closeDetail() {
+  panelOpenId = null;
+  scrim.classList.remove('open');
+  panel.classList.remove('open');
+  panel.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+
+/* patchDetailPanel — updates live metrics + event log without rebuilding the whole body */
+function patchDetailPanel(id) {
+  const u = UPS.find(x => x.id === id);
+  if (!u || !panel.classList.contains('open')) return;
+  const body = document.getElementById('panel-body');
+
+  // Live-metric block
+  if (u.metrics) {
+    const m = u.metrics;
+    const battCls = battClassFor(m.batteryPct);
+    const loadCls = loadLevel(m.loadPct);
+    setPanelMetric(body, 'p-input',   `${m.inputV}<span class="unit">V</span>`,   u.status === 'battery' ? 'dead' : '');
+    setPanelMetric(body, 'p-output',  `${m.outputV}<span class="unit">V</span>`,  '');
+    setPanelMetric(body, 'p-freq',    `${m.freq.toFixed(1)}<span class="unit">Hz</span>`, u.status === 'battery' ? 'dead' : '');
+    setPanelMetric(body, 'p-batpct',  `${m.batteryPct}<span class="unit">%</span>`, battCls);
+    setPanelMetric(body, 'p-batv',    `${m.batteryV.toFixed(1)}<span class="unit">V</span>`, '');
+    setPanelMetric(body, 'p-load',    `${m.loadPct}<span class="unit">% · ${m.loadW}W</span>`, loadCls);
+  }
+
+  // Runtime callout color
+  const runtimeCallout = body.querySelector('[data-field="p-runtime-callout"]');
+  if (runtimeCallout && u.metrics) {
+    const wantCls = u.status === 'battery'
+      ? (u.metrics.batteryPct <= THRESH.battCrit ? 'runtime-callout crit' :
+         u.metrics.batteryPct <= THRESH.battLow  ? 'runtime-callout warn' :
+         'runtime-callout warn')
+      : 'runtime-callout';
+    if (runtimeCallout.className !== wantCls) runtimeCallout.className = wantCls;
+    const rtVal = body.querySelector('[data-field="p-runtime-val"]');
+    if (rtVal) {
+      const wantRt = u.status === 'battery'
+        ? `~${u.metrics.runtimeMin} min left`
+        : `~${u.peakRuntimeMin} min`;
+      if (rtVal.textContent !== wantRt) rtVal.textContent = wantRt;
+    }
+    const rtCap = body.querySelector('[data-field="p-runtime-cap"]');
+    if (rtCap) {
+      const wantCap = u.status === 'battery'
+        ? `Now on battery — runtime is counting down at the current load (~${u.metrics.loadW}W).`
+        : `Estimated at peak load (~${u.peakLoadW}W). Under normal operating conditions, real-world runtime is typically longer.`;
+      if (rtCap.textContent !== wantCap) rtCap.textContent = wantCap;
+    }
+  }
+
+  // Patch the embedded flow diagram inside the panel too
+  const panelFlow = body.querySelector('.flow');
+  if (panelFlow && u.metrics) {
+    const m = u.metrics;
+    const onBattery = u.status === 'battery';
+    const acN = panelFlow.querySelector('.flow-ac');
+    const acL = panelFlow.querySelector('.flow-line-ac');
+    if (acN) acN.dataset.active = onBattery ? 'false' : 'true';
+    if (acL) acL.dataset.active = onBattery ? 'false' : 'true';
+    const acVal = panelFlow.querySelector('[data-field="ac-val"]');
+    if (acVal) {
+      acVal.textContent = onBattery ? 'FAILED' : `${m.inputV}V`;
+      acVal.className = onBattery ? 'flow-val dead' : 'flow-val';
+    }
+    const upsStatus = panelFlow.querySelector('[data-field="ups-status"]');
+    if (upsStatus) upsStatus.textContent =
+      u.status === 'battery' ? 'ON BATTERY' :
+      u.status === 'critical' ? 'CRITICAL' : 'ONLINE';
+    const loadFlow = panelFlow.querySelector('[data-field="load-val-flow"]');
+    if (loadFlow) loadFlow.textContent = `${m.outputV}V · ${m.loadW}W`;
+    const branch = panelFlow.querySelector('.flow-branch');
+    const branchMode = onBattery ? 'draining' : (m.charging ? 'charging' : 'idle');
+    if (branch) branch.dataset.mode = branchMode;
+    const batN = panelFlow.querySelector('.flow-bat');
+    const batF = panelFlow.querySelector('[data-field="bat-fill"]');
+    const batP = panelFlow.querySelector('[data-field="bat-pct"]');
+    const batE = panelFlow.querySelector('[data-field="bat-eta"]');
+    if (batN) { batN.dataset.level = batteryLevel(m.batteryPct); batN.dataset.mode = branchMode; }
+    if (batF) batF.style.width = `${m.batteryPct}%`;
+    if (batP) {
+      batP.className = `flow-bat-pct${battClassFor(m.batteryPct) ? ' ' + battClassFor(m.batteryPct) : ''}`;
+      batP.innerHTML = `${m.batteryPct}<span>%</span>`;
+    }
+    if (batE) batE.textContent = chargeEtaText(m);
+  }
+
+  // Refresh event log rows if list changed
+  const logHost = body.querySelector('[data-field="p-log"]');
+  if (logHost) {
+    const rows = eventLog.slice(0, 12).map(e => `
+      <div class="event-log-row">
+        <span class="t">${fmtTime(e.t)}</span>
+        <span class="lvl ${e.level}">${e.level.toUpperCase()}</span>
+        <span class="msg">${e.msg}</span>
+      </div>
+    `).join('');
+    if (logHost.innerHTML !== rows) logHost.innerHTML = rows;
+  }
+}
+
+function setPanelMetric(root, name, html, extraCls) {
+  const el = root.querySelector(`[data-field="${name}"]`);
+  if (!el) return;
+  const wantCls = `live-metric-value${extraCls ? ' ' + extraCls : ''}`;
+  if (el.className !== wantCls) el.className = wantCls;
+  if (el.innerHTML !== html) el.innerHTML = html;
+}
+
+function renderDetailBody(u) {
+  const m = u.metrics;
+
+  const flowHTML = u.installed ? `
+    <section class="panel-section">
+      <div class="panel-section-title">Power topology</div>
+      ${renderFlowOnly(u, true)}
+    </section>
+  ` : '';
+
+  const battCls = m ? battClassFor(m.batteryPct) : '';
+  const loadCls = m ? loadLevel(m.loadPct)      : '';
+  const onBat = u.status === 'battery';
+
+  const liveMetricsHTML = m ? `
+    <section class="panel-section">
+      <div class="panel-section-title">Live readings</div>
+      <div class="live-metrics">
+        <div class="live-metric"><div class="live-metric-label">Input voltage</div>  <div class="live-metric-value ${onBat ? 'dead' : ''}"  data-field="p-input">${m.inputV}<span class="unit">V</span></div></div>
+        <div class="live-metric"><div class="live-metric-label">Output voltage</div> <div class="live-metric-value"                          data-field="p-output">${m.outputV}<span class="unit">V</span></div></div>
+        <div class="live-metric"><div class="live-metric-label">Frequency</div>      <div class="live-metric-value ${onBat ? 'dead' : ''}"  data-field="p-freq">${m.freq.toFixed(1)}<span class="unit">Hz</span></div></div>
+        <div class="live-metric"><div class="live-metric-label">Battery</div>        <div class="live-metric-value ${battCls}"                data-field="p-batpct">${m.batteryPct}<span class="unit">%</span></div></div>
+        <div class="live-metric"><div class="live-metric-label">Battery volt.</div>  <div class="live-metric-value"                          data-field="p-batv">${m.batteryV.toFixed(1)}<span class="unit">V</span></div></div>
+        <div class="live-metric"><div class="live-metric-label">Load</div>           <div class="live-metric-value ${loadCls}"                data-field="p-load">${m.loadPct}<span class="unit">% · ${m.loadW}W</span></div></div>
+      </div>
+    </section>
+  ` : `
+    <section class="panel-section">
+      <div class="panel-section-title">Live readings</div>
+      <div style="padding:20px;text-align:center;background:var(--bg-sunken);border-radius:var(--r);color:var(--ink-2);font-size:12.5px;border:1px solid var(--line)">
+        This UPS is not yet installed. Live readings appear once commissioned.
+      </div>
+    </section>
+  `;
+
+  const runtimeHTML = u.peakRuntimeMin && m ? `
+    <section class="panel-section">
+      <div class="panel-section-title">Backup runtime</div>
+      <div class="runtime-callout ${onBat ? (m.batteryPct <= THRESH.battCrit ? 'crit' : 'warn') : ''}" data-field="p-runtime-callout">
+        <div class="runtime-value" data-field="p-runtime-val">${onBat ? `~${m.runtimeMin} min left` : `~${u.peakRuntimeMin} min`}</div>
+        <div class="runtime-caption" data-field="p-runtime-cap">${onBat
+          ? `Now on battery — runtime is counting down at the current load (~${m.loadW}W).`
+          : `Estimated at peak load (~${u.peakLoadW}W). Under normal operating conditions, real-world runtime is typically longer.`}
+        </div>
+      </div>
+    </section>
+  ` : '';
+
+  const equipmentHTML = u.equipment.length ? `
+    <section class="panel-section">
+      <div class="panel-section-title">Equipment powered</div>
+      <div>
+        ${u.equipment.map(e => `
+          <div class="equipment-item">
+            <div class="equipment-icon">${ICONS[e.type] || ICONS.switch}</div>
+            <div class="equipment-info">
+              <div class="equipment-name">${e.name}</div>
+              <div class="equipment-purpose">${e.purpose}</div>
+              ${e.link ? `<a class="equipment-link" href="${e.link}" target="_blank" rel="noopener">${e.link} ${ICONS.ext}</a>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </section>
+  ` : '';
+
+  const coverageHTML = u.coverage.length ? `
+    <section class="panel-section">
+      <div class="panel-section-title">Areas covered</div>
+      <div>
+        ${u.coverage.map(c => `
+          <div class="coverage-item">
+            <div class="floor-tag">${c.floor}</div>
+            <div class="coverage-desc">${c.desc}</div>
+          </div>
+        `).join('')}
+      </div>
+    </section>
+  ` : '';
+
+  const batteryHTML = u.battery ? `
+    <section class="panel-section">
+      <div class="panel-section-title">Battery pack</div>
+      <div class="info-row"><span class="label">Configuration</span>          <span class="value">${u.battery.count}× ${u.battery.spec}</span></div>
+      <div class="info-row"><span class="label">Installed</span>              <span class="value">${u.battery.installedDate}</span></div>
+      <div class="info-row"><span class="label">Next replacement (est.)</span><span class="value">${u.battery.nextReplace}</span></div>
+    </section>
+  ` : '';
+
+  const logRows = eventLog.slice(0, 12).map(e => `
+    <div class="event-log-row">
+      <span class="t">${fmtTime(e.t)}</span>
+      <span class="lvl ${e.level}">${e.level.toUpperCase()}</span>
+      <span class="msg">${e.msg}</span>
+    </div>
+  `).join('');
+  const logHTML = `
+    <section class="panel-section">
+      <div class="panel-section-title">Recent events</div>
+      <div class="event-log" data-field="p-log">${logRows || '<div class="event-log-row"><span class="msg" style="color:var(--ink-3)">No events yet.</span></div>'}</div>
+    </section>
+  `;
+
+  const actionsHTML = u.installed ? `
+    <section class="panel-section" style="margin-bottom:0">
+      <div class="panel-section-title">Quick actions</div>
+      <div class="actions-row">
+        <button class="action-btn" title="Enabled once NUT is live">${ICONS.test} Battery test</button>
+        <button class="action-btn" title="Enabled once NUT is live">${ICONS.buzzer} Toggle buzzer</button>
+        <button class="action-btn" title="Enabled once NUT is live">${ICONS.logs} Full event log</button>
+      </div>
+      <div style="font-size:11px;color:var(--ink-3);margin-top:10px;line-height:1.5">
+        Actions become live once NUT WebGUI is deployed to the central Pi. This panel is preview only for now.
+      </div>
+    </section>
+  ` : '';
+
+  return flowHTML + liveMetricsHTML + runtimeHTML + equipmentHTML + coverageHTML + batteryHTML + logHTML + actionsHTML;
+}
+
+/* Render just the flow diagram markup (used inside the panel) */
+function renderFlowOnly(u, isPanel) {
+  const m = u.metrics;
+  if (!m) return '';
+  const flowCls = isPanel ? 'flow flow-large' : 'flow';
+  return `
+    <div class="${flowCls}">
+      <div class="flow-ac flow-node" data-active="true">
+        <div class="flow-icon">${ICONS.bolt}</div>
+        <div class="flow-label">Mains</div>
+        <div class="flow-val" data-field="ac-val">${m.inputV}V</div>
+      </div>
+      <div class="flow-line flow-line-ac" data-active="true"></div>
+      <div class="flow-ups flow-node">
+        <div class="flow-icon">${ICONS.ups}</div>
+        <div class="flow-label">UPS</div>
+        <div class="flow-val" data-field="ups-status">ONLINE</div>
+      </div>
+      <div class="flow-line flow-line-out" data-active="true"></div>
+      <div class="flow-load flow-node">
+        <div class="flow-icon">${ICONS.monitor}</div>
+        <div class="flow-label">Load</div>
+        <div class="flow-val" data-field="load-val-flow">${m.outputV}V · ${m.loadW}W</div>
+      </div>
+      <div class="flow-branch" data-mode="idle"></div>
+      <div class="flow-bat" data-level="${batteryLevel(m.batteryPct)}" data-mode="idle">
+        <div class="flow-bat-shape">
+          <div class="flow-bat-fill" data-field="bat-fill" style="width: ${m.batteryPct}%"></div>
+        </div>
+        <div class="flow-bat-pct ${battClassFor(m.batteryPct)}" data-field="bat-pct">${m.batteryPct}<span>%</span></div>
+        <div class="flow-label">Battery</div>
+        <div class="flow-bat-eta" data-field="bat-eta">${chargeEtaText(m)}</div>
+      </div>
+    </div>
+  `;
+}
+
+/* ==========================================================
+   THEME
+   ========================================================== */
+const themeBtn = document.getElementById('theme-toggle');
+const sunIcon  = document.getElementById('sun-icon');
+const moonIcon = document.getElementById('moon-icon');
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.querySelector('meta[name="theme-color"]').setAttribute(
+    'content', theme === 'dark' ? '#060A13' : '#F7F8FA'
+  );
+  sunIcon.style.display  = theme === 'dark' ? 'none'  : 'block';
+  moonIcon.style.display = theme === 'dark' ? 'block' : 'none';
+  try { localStorage.setItem('ups-theme', theme); } catch (e) {}
+}
+function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem('ups-theme'); } catch (e) {}
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved || (prefersDark ? 'dark' : 'light'));
+}
+themeBtn.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+});
+
+/* ==========================================================
+   SOUND TOGGLE
+   ========================================================== */
+const soundBtn = document.getElementById('sound-toggle');
+const soundOnIcon  = document.getElementById('sound-on-icon');
+const soundOffIcon = document.getElementById('sound-off-icon');
+function applySound(on) {
+  soundEnabled = on;
+  soundBtn.setAttribute('data-on', on ? 'true' : 'false');
+  soundOnIcon.style.display  = on ? 'block' : 'none';
+  soundOffIcon.style.display = on ? 'none'  : 'block';
+  try { localStorage.setItem('ups-sound', on ? '1' : '0'); } catch (e) {}
+  if (on) { ensureAudio(); renderAlertBanner(); }
+  else    { stopSoundLoop(); }
+}
+soundBtn.addEventListener('click', () => applySound(!soundEnabled));
+try { applySound(localStorage.getItem('ups-sound') === '1'); } catch (e) { applySound(false); }
+
+/* ==========================================================
+   ALERT BUTTONS
+   ========================================================== */
+document.getElementById('alert-ack').addEventListener('click', acknowledgeAll);
+document.getElementById('alert-silence').addEventListener('click', () => {
+  stopSoundLoop();
+  applySound(false);
+});
+
+/* ==========================================================
+   REFRESH
+   ========================================================== */
+document.getElementById('refresh').addEventListener('click', (e) => {
+  const btn = e.currentTarget;
+  btn.classList.add('spinning');
+  setTimeout(() => btn.classList.remove('spinning'), 900);
+  tickMockData();
+  reconcileAlerts();
+  updateGrid();
+  bumpLastUpdated();
+});
+
+function tickMockData() {
+  UPS.forEach(u => {
+    if (!u.metrics) return;
+    if (u.status === 'battery') {
+      u.metrics.batteryPct = Math.max(0, u.metrics.batteryPct - Math.round(Math.random() * 2 + 1));
+      u.metrics.runtimeMin = Math.max(0, u.metrics.runtimeMin - 1);
+      u.metrics.inputV = 0;
+      u.metrics.freq = 0;
+      u.metrics.charging = false;
+    } else {
+      u.metrics.batteryPct = Math.min(100, u.metrics.batteryPct + (u.metrics.batteryPct < 100 ? 2 : 0));
+      u.metrics.runtimeMin = u.peakRuntimeMin || u.metrics.runtimeMin;
+      u.metrics.inputV = 230 + Math.round((Math.random() - 0.5) * 6);
+      u.metrics.freq   = 50 + (Math.random() - 0.5) * 0.2;
+      u.metrics.charging = u.metrics.batteryPct < 100;
+    }
+    u.metrics.outputV = 230 + Math.round((Math.random() - 0.5) * 4);
+    u.metrics.loadPct = Math.max(1, Math.min(100, u.metrics.loadPct + Math.round((Math.random() - 0.5) * 3)));
+    u.metrics.loadW   = Math.round(u.capacityW * u.metrics.loadPct / 100);
+    trackLoad(u);
+  });
+}
+
+let lastUpdateTs = Date.now();
+function bumpLastUpdated() { lastUpdateTs = Date.now(); }
+
+/* ==========================================================
+   DEMO CONTROLS
+   ========================================================== */
+document.querySelectorAll('.demo-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const sim = btn.dataset.sim;
+    if (sim === 'battery') {
+      const u = UPS.find(x => x.id === 'l07');
+      if (u) {
+        u.status = 'battery';
+        u.metrics.inputV = 0; u.metrics.freq = 0; u.metrics.charging = false;
+        logEvent(`${u.location} switched to battery — mains power lost`, 'crit');
+      }
+    } else if (sim === 'lowbatt') {
+      const u = UPS.find(x => x.id === 'l15');
+      if (u) {
+        u.metrics.batteryPct = 12;
+        logEvent(`${u.location} battery drained to 12%`, 'warn');
+      }
+    } else if (sim === 'overload') {
+      const u = UPS.find(x => x.id === 'mdf');
+      if (u) {
+        u.metrics.loadPct = 94;
+        u.metrics.loadW = Math.round(u.capacityW * 0.94);
+        logEvent(`${u.location} load spiked to 94%`, 'crit');
+      }
+    } else if (sim === 'restore') {
+      UPS.forEach(u => {
+        if (!u.installed) return;
+        u.status = 'online';
+        u.metrics.batteryPct = 100;
+        u.metrics.inputV = 231;
+        u.metrics.freq = 50;
+        u.metrics.charging = false;
+        u.metrics.loadPct = Math.min(u.metrics.loadPct, 30);
+        u.metrics.loadW = Math.round(u.capacityW * u.metrics.loadPct / 100);
+      });
+      logEvent('All UPS restored to normal operation', 'ok');
+    }
+    reconcileAlerts();
+    updateGrid();
+    bumpLastUpdated();
+  });
+});
+
+/* ==========================================================
+   CLOSE / KEYS
+   ========================================================== */
+document.getElementById('close-panel').addEventListener('click', closeDetail);
+scrim.addEventListener('click', closeDetail);
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeDetail();
+});
+
+/* ==========================================================
+   TICKERS
+   ========================================================== */
+setInterval(() => {
+  const el = document.getElementById('last-updated');
+  const s = Math.floor((Date.now() - lastUpdateTs) / 1000);
+  if (s < 5)       el.textContent = 'just now';
+  else if (s < 60) el.textContent = `${s}s ago`;
+  else             el.textContent = `${Math.floor(s / 60)}m ago`;
+}, 1000);
+
+/* Auto-tick every 3s — updates in place, no page flash.
+   In production, replace with:
+     setInterval(async () => {
+       const fresh = await fetch('/api/ups').then(r => r.json());
+       UPS.splice(0, UPS.length, ...fresh);
+       UPS.forEach(trackLoad);
+       reconcileAlerts();
+       updateGrid();
+       bumpLastUpdated();
+     }, 2000);
+*/
+setInterval(() => {
+  tickMockData();
+  reconcileAlerts();
+  updateGrid();
+  bumpLastUpdated();
+}, 3000);
+
+/* ==========================================================
+   INIT
+   ========================================================== */
+initTheme();
+UPS.forEach(trackLoad); // seed history with initial values
+initGrid();
+updateGrid();
+logEvent('Dashboard loaded — monitoring 6 units (mock data)', 'info');
+</script>
+</body>
+</html>
