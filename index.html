@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..24,300,0..1,0" rel="stylesheet">
 <style>
 /* ==========================================================
    DESIGN TOKENS — fintech / ops-desk
@@ -1493,14 +1494,34 @@ body::before {
 .equipment-link:hover { border-color: var(--accent); text-decoration: none; }
 .equipment-link svg { width: 10px; height: 10px; }
 
+/* Material Symbols helper */
+.mat-icon {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  vertical-align: middle;
+  font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+}
+.mat-icon.on  { color: var(--ok); }
+.mat-icon.off { color: var(--crit); }
+
 /* Coverage */
 .coverage-item {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 14px;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
   padding: 10px 0;
   border-bottom: 1px dashed var(--line);
-  align-items: baseline;
+  align-items: center;
 }
 .coverage-item:last-child { border-bottom: none; }
 .floor-tag {
@@ -1519,6 +1540,10 @@ body::before {
   font-size: 12.5px;
   color: var(--ink);
   line-height: 1.5;
+}
+.coverage-wifi {
+  font-size: 16px;
+  opacity: .8;
 }
 
 /* Info rows */
@@ -1890,7 +1915,7 @@ const UPS = [
       batteryPct: 100, batteryV: 54.2, runtimeMin: 45, freq: 50.0, charging: false },
     peakLoadW: 255, peakRuntimeMin: 45,
     equipment: [
-      { name: 'Meraki MS130-48P',    type: 'wifi', purpose: 'Wi-Fi network — 21 access points', link: null },
+      { name: 'Meraki MS130-48P',    type: 'wifi', purpose: 'Wi-Fi network, 21 access points', link: null },
       { name: 'TP-Link TL-SG3452XP', type: 'cctv', purpose: 'CCTV camera network',              link: 'http://192.168.100.2/' }
     ],
     coverage: [
@@ -1909,8 +1934,8 @@ const UPS = [
       batteryPct: 100, batteryV: 54.4, runtimeMin: 30, freq: 50.0, charging: false },
     peakLoadW: 345, peakRuntimeMin: 30,
     equipment: [
-      { name: 'Meraki MS120-48LP', type: 'wifi', purpose: 'Wi-Fi network — 48 access points', link: null },
-      { name: 'Cisco SG220-26P',   type: 'cctv', purpose: 'CCTV camera network',              link: null }
+      { name: 'Meraki MS120-48LP', type: 'wifi', purpose: 'Wi-Fi network, 48 access points', link: null },
+      { name: 'Cisco SG220-26P',   type: 'cctv', purpose: 'CCTV camera network',              link: 'http://192.168.100.3/' }
     ],
     coverage: [
       { floor: 'Floor 10', desc: 'Rooms 1000, 1003, 1007, 1008, 1011, 1012, 1017 & Lift Lobby' },
@@ -1923,18 +1948,43 @@ const UPS = [
     battery: { count: 4, spec: '12V/9Ah lead-acid', installedDate: '21 Aug 2026', nextReplace: 'Aug 2029' }
   },
   {
-    id: 'l21', location: 'Level 21', rackName: 'Network Rack',
-    distribution: 'Distribution — TBD', model: 'Hikvision DS-UPS3000',
-    capacityVA: 3000, capacityW: 1800, status: 'pending', installed: false,
-    metrics: null, peakLoadW: null, peakRuntimeMin: null,
-    equipment: [], coverage: [], battery: null
+    id: 'l21', location: 'Level 21', rackName: 'F21 Server Rack',
+    distribution: 'Distribution #4', model: 'Hikvision DS-UPS3000',
+    capacityVA: 3000, capacityW: 1800, status: 'online', installed: true,
+    metrics: { inputV: 233, outputV: 232, loadPct: 18, loadW: 324,
+      batteryPct: 100, batteryV: 54.3, runtimeMin: 32, freq: 50.0, charging: false },
+    peakLoadW: 324, peakRuntimeMin: 32,
+    equipment: [
+      { name: 'Meraki MS120-48LP',    type: 'wifi', purpose: 'Wi-Fi network, 48 access points, Port 51 uplink to F26', link: null },
+      { name: 'Ruijie RG-ES226GC-P',  type: 'cctv', purpose: 'CCTV camera network',  link: 'http://192.168.100.4/' }
+    ],
+    coverage: [
+      { floor: 'Floor 18', desc: 'Rooms 1800, 1803, 1807, 1808, 1811, 1812, 1817 & Lift Lobby' },
+      { floor: 'Floor 19', desc: 'Rooms 1900, 1903, 1907, 1908, 1911, 1912, 1917 & Lift Lobby' },
+      { floor: 'Floor 20', desc: 'Rooms 2000, 2003, 2007, 2008, 2011, 2012, 2017 & Lift Lobby' },
+      { floor: 'Floor 21', desc: 'Rooms 2100, 2103, 2107, 2108, 2111, 2112, 2117 & Lift Lobby' },
+      { floor: 'Floor 22', desc: 'Rooms 2200, 2203, 2207, 2208, 2211, 2212, 2217 & Lift Lobby' },
+      { floor: 'Floor 23', desc: 'Rooms 2300, 2303, 2307, 2308, 2311, 2312, 2317 & Lift Lobby' }
+    ],
+    battery: { count: 4, spec: '12V/9Ah lead-acid', installedDate: '06 Oct 2026', nextReplace: 'Oct 2029' }
   },
   {
-    id: 'l26', location: 'Level 26', rackName: 'Network Rack',
-    distribution: 'Distribution — TBD', model: 'Hikvision DS-UPS3000',
-    capacityVA: 3000, capacityW: 1800, status: 'pending', installed: false,
-    metrics: null, peakLoadW: null, peakRuntimeMin: null,
-    equipment: [], coverage: [], battery: null
+    id: 'l26', location: 'Level 26', rackName: 'F26 Lift Motor Room Rack',
+    distribution: 'Distribution #5', model: 'Hikvision DS-UPS3000',
+    capacityVA: 3000, capacityW: 1800, status: 'online', installed: true,
+    metrics: { inputV: 232, outputV: 231, loadPct: 12, loadW: 216,
+      batteryPct: 100, batteryV: 54.2, runtimeMin: 38, freq: 50.0, charging: false },
+    peakLoadW: 216, peakRuntimeMin: 38,
+    equipment: [
+      { name: 'Ruijie NBS3100-8GT2SFP-P-V2', type: 'wifi', purpose: 'Wi-Fi network, 4 access points, uplink from F21 Port 51', link: null },
+      { name: 'Ruijie RG-ES226GC-P',          type: 'cctv', purpose: 'CCTV camera network',  link: 'http://192.168.100.5/' }
+    ],
+    coverage: [
+      { floor: 'Floor 23A', desc: 'Water Tanks' },
+      { floor: 'Floor 25', desc: 'Pool Counter & Pool Back' },
+      { floor: 'Floor 26', desc: 'Lift Motor Room' }
+    ],
+    battery: { count: 4, spec: '12V/9Ah lead-acid', installedDate: '06 Oct 2026', nextReplace: 'Oct 2029' }
   },
   {
     id: 'mdf', location: 'MDF Room', rackName: 'Main Distribution Frame',
@@ -1946,9 +1996,9 @@ const UPS = [
     equipment: [
       { name: 'D-Link DPN-FX3060V',       type: 'router', purpose: 'Unifi 2 Gbps fibre ONT',                   link: null },
       { name: 'Huawei EchoLife EG8145V5', type: 'router', purpose: 'MYISP 100 Mbps fibre ONT',                 link: null },
-      { name: 'ZTE ZXHN F620',            type: 'router', purpose: 'Unifi hotel phone line — 04-255-1000',    link: null }
+      { name: 'ZTE ZXHN F620',            type: 'router', purpose: 'Unifi hotel phone line, 04-255-1000',    link: null }
     ],
-    coverage: [ { floor: 'MDF', desc: 'Main distribution frame equipment — every floor depends on this' } ],
+    coverage: [ { floor: 'MDF', desc: 'Main distribution frame equipment, every floor depends on this' } ],
     battery: { count: 4, spec: '12V/9Ah lead-acid', installedDate: '29 Aug 2026', nextReplace: 'Aug 2029' }
   },
   {
@@ -2007,15 +2057,15 @@ function detectAlerts() {
     if (!u.installed || !u.metrics) continue;
     if (u.status === 'battery') {
       found.push({ upsId: u.id, level: 'crit', code: 'ON_BATTERY',
-        message: `<strong>${u.location}</strong> is running on battery — mains power lost` });
+        message: `<strong>${u.location}</strong> is running on battery, mains power lost` });
     }
     if (u.status === 'critical') {
       found.push({ upsId: u.id, level: 'crit', code: 'CRITICAL',
-        message: `<strong>${u.location}</strong> in critical state — check unit immediately` });
+        message: `<strong>${u.location}</strong> in critical state, check unit immediately` });
     }
     if (u.metrics.batteryPct <= THRESH.battCrit) {
       found.push({ upsId: u.id, level: 'crit', code: 'BATT_CRIT',
-        message: `<strong>${u.location}</strong> battery at ${u.metrics.batteryPct}% — shutdown imminent` });
+        message: `<strong>${u.location}</strong> battery at ${u.metrics.batteryPct}%, shutdown imminent` });
     } else if (u.metrics.batteryPct <= THRESH.battLow) {
       found.push({ upsId: u.id, level: 'warn', code: 'BATT_LOW',
         message: `<strong>${u.location}</strong> battery low (${u.metrics.batteryPct}%)` });
@@ -2037,14 +2087,14 @@ function reconcileAlerts() {
   for (const [key] of alertState) {
     if (!activeKeys.has(key)) {
       alertState.delete(key);
-      logEvent(`Alert cleared: ${key.split('::').join(' — ')}`, 'ok');
+      logEvent(`Alert cleared: ${key.split('::').join(' / ')}`, 'ok');
     }
   }
   for (const a of active) {
     const key = `${a.upsId}::${a.code}`;
     if (!alertState.has(key)) {
       alertState.set(key, { ...a, ackAt: null, firstAt: Date.now() });
-      logEvent(`Alert raised: ${a.upsId} — ${a.code}`, a.level);
+      logEvent(`Alert raised: ${a.upsId} / ${a.code}`, a.level);
     } else {
       const prev = alertState.get(key);
       alertState.set(key, { ...prev, message: a.message, level: a.level });
@@ -2071,8 +2121,8 @@ function renderAlertBanner() {
   const primary = alerts.find(a => !a.ackAt) || alerts[0];
   document.getElementById('alert-title').textContent =
     anyUnacked
-      ? (anyCrit ? 'CRITICAL — Attention required' : 'Warning — Attention required')
-      : 'Acknowledged — condition still active';
+      ? (anyCrit ? 'CRITICAL · Attention required' : 'Warning · Attention required')
+      : 'Acknowledged · condition still active';
   document.getElementById('alert-count').textContent = `${alerts.length} ACTIVE`;
   document.getElementById('alert-msg').innerHTML = alerts.length === 1
     ? primary.message
@@ -2573,8 +2623,8 @@ function updateKPIs() {
   if (kpiBatt.className !== battCls) kpiBatt.className = battCls;
   const battHTML = `${avgBatt}<span class="unit">%</span>`;
   if (kpiBatt.innerHTML !== battHTML) kpiBatt.innerHTML = battHTML;
-  const battSubText = minBatt <= THRESH.battCrit ? `lowest: ${minBatt}% — critical` :
-                      minBatt <= THRESH.battLow  ? `lowest: ${minBatt}% — low` :
+  const battSubText = minBatt <= THRESH.battCrit ? `lowest: ${minBatt}%, critical` :
+                      minBatt <= THRESH.battLow  ? `lowest: ${minBatt}%, low` :
                       'all cells fresh';
   const battSubEl = document.getElementById('kpi-batt-sub');
   if (battSubEl.textContent !== battSubText) battSubEl.textContent = battSubText;
@@ -2651,7 +2701,7 @@ function patchDetailPanel(id) {
     const rtCap = body.querySelector('[data-field="p-runtime-cap"]');
     if (rtCap) {
       const wantCap = u.status === 'battery'
-        ? `Now on battery — runtime is counting down at the current load (~${u.metrics.loadW}W).`
+        ? `Now on battery, runtime is counting down at the current load (~${u.metrics.loadW}W).`
         : `Estimated at peak load (~${u.peakLoadW}W). Under normal operating conditions, real-world runtime is typically longer.`;
       if (rtCap.textContent !== wantCap) rtCap.textContent = wantCap;
     }
@@ -2705,6 +2755,14 @@ function patchDetailPanel(id) {
     `).join('');
     if (logHost.innerHTML !== rows) logHost.innerHTML = rows;
   }
+
+  // Patch wifi status icons in coverage area
+  const wifiUp = u.status === 'online' || u.status === 'battery';
+  body.querySelectorAll('.coverage-wifi').forEach(el => {
+    el.textContent = wifiUp ? 'wifi' : 'wifi_off';
+    el.classList.toggle('on', wifiUp);
+    el.classList.toggle('off', !wifiUp);
+  });
 }
 
 function setPanelMetric(root, name, html, extraCls) {
@@ -2756,7 +2814,7 @@ function renderDetailBody(u) {
       <div class="runtime-callout ${onBat ? (m.batteryPct <= THRESH.battCrit ? 'crit' : 'warn') : ''}" data-field="p-runtime-callout">
         <div class="runtime-value" data-field="p-runtime-val">${onBat ? `~${m.runtimeMin} min left` : `~${u.peakRuntimeMin} min`}</div>
         <div class="runtime-caption" data-field="p-runtime-cap">${onBat
-          ? `Now on battery — runtime is counting down at the current load (~${m.loadW}W).`
+          ? `Now on battery, runtime is counting down at the current load (~${m.loadW}W).`
           : `Estimated at peak load (~${u.peakLoadW}W). Under normal operating conditions, real-world runtime is typically longer.`}
         </div>
       </div>
@@ -2781,14 +2839,19 @@ function renderDetailBody(u) {
     </section>
   ` : '';
 
+  const wifiUp = u.status === 'online' || u.status === 'battery';
+  const wifiIcon = wifiUp
+    ? '<span class="mat-icon on coverage-wifi">wifi</span>'
+    : '<span class="mat-icon off coverage-wifi">wifi_off</span>';
   const coverageHTML = u.coverage.length ? `
     <section class="panel-section">
-      <div class="panel-section-title">Areas covered</div>
+      <div class="panel-section-title">Areas covered ${wifiIcon}</div>
       <div>
         ${u.coverage.map(c => `
           <div class="coverage-item">
             <div class="floor-tag">${c.floor}</div>
             <div class="coverage-desc">${c.desc}</div>
+            ${wifiIcon}
           </div>
         `).join('')}
       </div>
@@ -2948,6 +3011,15 @@ function tickMockData() {
       u.metrics.inputV = 0;
       u.metrics.freq = 0;
       u.metrics.charging = false;
+      if (u.metrics.batteryPct <= 0) {
+        u.status = 'critical';
+        u.metrics.loadPct = 0; u.metrics.loadW = 0;
+        logEvent(`${u.location} battery depleted, equipment offline`, 'crit');
+      }
+    } else if (u.status === 'critical') {
+      u.metrics.inputV = 0; u.metrics.freq = 0;
+      u.metrics.batteryPct = 0; u.metrics.runtimeMin = 0;
+      u.metrics.loadPct = 0; u.metrics.loadW = 0;
     } else {
       u.metrics.batteryPct = Math.min(100, u.metrics.batteryPct + (u.metrics.batteryPct < 100 ? 2 : 0));
       u.metrics.runtimeMin = u.peakRuntimeMin || u.metrics.runtimeMin;
@@ -2976,7 +3048,7 @@ document.querySelectorAll('.demo-btn').forEach(btn => {
       if (u) {
         u.status = 'battery';
         u.metrics.inputV = 0; u.metrics.freq = 0; u.metrics.charging = false;
-        logEvent(`${u.location} switched to battery — mains power lost`, 'crit');
+        logEvent(`${u.location} switched to battery, mains power lost`, 'crit');
       }
     } else if (sim === 'lowbatt') {
       const u = UPS.find(x => x.id === 'l15');
@@ -3055,7 +3127,7 @@ initTheme();
 UPS.forEach(trackLoad); // seed history with initial values
 initGrid();
 updateGrid();
-logEvent('Dashboard loaded — monitoring 6 units (mock data)', 'info');
+logEvent('Dashboard loaded, monitoring 6 units (mock data)', 'info');
 </script>
 </body>
 </html>
